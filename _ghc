@@ -3,12 +3,43 @@
 #
 #compdef ghc
 
+_ghc_packages () {
+  local -a pkgs
+  pkgs=( $(ghc-pkg list) )
+  _describe -t pkgs "packages" pkgs
+}
+
 _ghc () {
   local opts
-  opts=( $(ghc --show-options) ) 
-  echo "GHC --show-options"
-  echo ${opts}
-  # _arguments ":options:(${opts[@]})"
+  opts=( $(ghc --show-options | \
+	    grep -v -P '^(-package|-pgm([acFiLlPs]|dll|lc|libtool|lowindres))$' | \
+	    grep -v -P '^(--exclude-module|-dep-makefile|-dumpdir|-hidir|-odir|-ohi)$' | \
+	    grep -v -P '^(-package-db)$' ) ) 
+
+  _arguments ${opts} \
+	     '*-package:package:_ghc_packages' \
+	     '-pgma:command:_cmdstring' \
+	     '-pgmc:command:_cmdstring' \
+	     '-pgmF:command:_cmdstring' \
+	     '-pgmi:command:_cmdstring' \
+	     '-pgmL:command:_cmdstring' \
+	     '-pgml:command:_cmdstring' \
+	     '-pgmP:command:_cmdstring' \
+	     '-pgms:command:_cmdstring' \
+	     '-pgmdll:command:_cmdstring' \
+	     '-pgmlc:command:_cmdstring' \
+	     '-pgmlibtool:command:_cmdstring' \
+	     '-pgmlowindres:command:_cmdstring' \
+	     '--excluded-module:directory:_files' \
+	     '-dep-makefile:directory:_files' \
+	     '-dumpdir:directory:_files -/' \
+	     '-hidir:directory:_files -/' \
+	     '-odir:directory:_files -/' \
+	     '-ohi:directory:_files' \
+	     '-outputdir:directory:_files -/' \
+	     '-stubdir:directory:_files -/' \
+	     '-package-db:package-db:_files'
 }
 
 compdef _ghc ghc
+compdef _ghc ghci
