@@ -1,0 +1,14 @@
+# Author: Marcin Szamotulski
+# Copyright: 2019
+#
+#compdef ghc
+
+_ghc () {
+  local opts
+  opts=( $(ghc --show-options) ) 
+  echo "GHC --show-options"
+  echo ${opts}
+  # _arguments ":options:(${opts[@]})"
+}
+
+compdef _ghc ghc
