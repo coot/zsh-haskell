@@ -3,8 +3,6 @@
 #
 #compdef cabal
 
-local expl
-
 _cabal_commands() {
     local ret=1 state
     _arguments ':subcommand:->subcommand' && ret=0
