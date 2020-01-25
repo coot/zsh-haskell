@@ -5,16 +5,22 @@
 
 _ghc_packages () {
   local -a pkgs
-  pkgs=( $(ghc-pkg list) )
+  pkgs=( $(ghc-pkg list --names-only --simple-output) )
   _describe -t pkgs "packages" pkgs
+}
+
+_ghc_package_ids () {
+  local -a pkgs
+  pkgs=( $(ghc-pkg list --simple-output) )
+  _describe -t pkgs "package-ids" pkgs
 }
 
 _ghc () {
   local opts
   opts=( $(ghc --show-options | \
-	    grep -v -P '^(-package|-pgm([acFiLlPs]|dll|lc|libtool|lowindres))$' | \
+	    grep -v -P '^(-pgm([acFiLlPs]|dll|lc|libtool|lowindres))$' | \
 	    grep -v -P '^(--exclude-module|-dep-makefile|-dumpdir|-hidir|-odir|-ohi)$' | \
-	    grep -v -P '^(-package-db)$' ) ) 
+	    grep -v -P '^(-package-db|-package|-package-id)$' ) ) 
 
   _arguments ${opts} \
 	     '*-package:package:_ghc_packages' \
@@ -38,8 +44,11 @@ _ghc () {
 	     '-ohi:directory:_files' \
 	     '-outputdir:directory:_files -/' \
 	     '-stubdir:directory:_files -/' \
-	     '-package-db:package-db:_files'
+	     '-package-db:package-db:_files' \
+	     '-package-id:package-id:_ghc_package_ids'
 }
 
 compdef _ghc ghc
 compdef _ghc ghci
+
+# vim:ft=zsh
