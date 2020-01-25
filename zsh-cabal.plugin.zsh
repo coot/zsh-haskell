@@ -45,7 +45,7 @@ _cabal_commands() {
 }
 
 _cabal_list_files () {
-  # find all cabal files, but do not descent into dist-newsty, dist or
+  # find all cabal files, but do not descent into dist-newstyle, dist or
   # .stack-work directories
   find -name "dist-newstyle" -prune , -name "dist" -prune , -name ".stack-work" -prune , -type f -name "*.cabal"
 }
@@ -68,7 +68,7 @@ _cabal_list_components () {
 }
 
 _cabal_list_executables () {
-  # find all executable compments
+  # find all executable components
   local file
   for file in $(_cabal_list_files); do
     grep -i '^\(test-suite\|executable\|benchmark\)\s+' $file | awk '{print $2}' | sed -e 's/:/\\:/g'
@@ -76,7 +76,7 @@ _cabal_list_executables () {
 }
 
 _cabal_list_benchmarks () {
-  # find all benchamrs
+  # find all benchmarks
   local file
   for file in $(_cabal_list_files); do
     grep -i '^benchmark\s+' $file | awk '{print $2}' | sed -e 's/:/\\:/g'
@@ -138,7 +138,7 @@ _cabal_find_ghc () {
 # todo:
 # cabal flags -f or --flag
 # --reject-unconstrained-dependencies
-# package db diles
+# package db files
 # --with-PROG=PATH
 # --PROG-option
 # --PROG-options
@@ -396,10 +396,8 @@ _cabal () {
 		     '--ignore' \
 		     '--minor'
 	;;
-
       esac
   esac
-
 }
 
 compdef _cabal cabal
