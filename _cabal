@@ -1,7 +1,7 @@
 # Author: Marcin Szamotulski
 # Copyright: 2019
-#
-#compdef cabal
+
+source "$(dirname ${0})/_ghc"
 
 _cabal_commands() {
     local ret=1 state
@@ -290,6 +290,8 @@ _cabal_build_options=( {-h,--help} \
          	       '--test-options' \
          	       '--test-option' \
                        '--only-configure' \
+		       '--ghc-option:ghc option:_ghc' \
+		       '--ghc-options:ghc options:_ghc' \
                      )
 
 _cabal () {
@@ -401,3 +403,5 @@ _cabal () {
 }
 
 compdef _cabal cabal
+
+# vim:ft=zsh
