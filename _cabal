@@ -237,7 +237,7 @@ _cabal_build_options=( {-h,--help} \
          	       '--disable-documentation' \
          	       '--doc-index-file=TEMPLATE' \
          	       '--dry-run' \
-         	       '--max-backjumps=NUM' \
+         	       '--max-backjumps' \
          	       '--reorder-goals' \
          	       '--count-conflicts' \
          	       '--minimize-conflict-set' \
