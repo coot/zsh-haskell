@@ -65,11 +65,21 @@ _cabal_list_components () {
   local file cmps
   for file in $(_cabal_list_files); do
     grep -P '^(test-suite|executable|benchmark|library)\s+\S' $file | awk '{print $2}' | sed -e 's/:/\\:/g'
-    [[ $(grep -i "^library\s*$" ${file}) ]] && echo "lib:"$(basename ${file} .cabal)" " | sed -e 's/:/\\:/g';
+    [[ $(grep -i "^library\s*$" ${file}) ]] && echo $(basename ${file} .cabal)" " | sed -e 's/:/\\:/g';
   done;
 }
 
-_cabal_list_executables () {
+_cabal_list_libraries () {
+  # find all components
+  local file cmps
+  for file in $(_cabal_list_files); do
+    grep -P '^library\s+\S' $file | awk '{print $2}' | sed -e 's/:/\\:/g'
+    [[ $(grep -i "^library\s*$" ${file}) ]] && echo $(basename ${file} .cabal)" " | sed -e 's/:/\\:/g';
+  done;
+}
+
+
+_cabal_list_all_executables () {
   # find all executable components
   local file
   for file in $(_cabal_list_files); do
@@ -77,11 +87,19 @@ _cabal_list_executables () {
   done;
 }
 
+_cabal_list_executables () {
+  # find all executable components
+  local file
+  for file in $(_cabal_list_files); do
+    grep -i '^executable\s\+' $file | awk '{print $2}' | sed -e 's/:/\\:/g'
+  done;
+}
+
 _cabal_list_tests () {
   # find all components
   local file cmps
   for file in $(_cabal_list_files); do
-    grep -P '^(test-suite)\s+\S' $file | awk '{print $2}' | sed -e 's/:/\\:/g'
+    grep -P '^test-suite\s+\S' $file | awk '{print $2}' | sed -e 's/:/\\:/g'
   done;
 }
 
@@ -89,36 +107,46 @@ _cabal_list_benchmarks () {
   # find all benchmarks
   local file
   for file in $(_cabal_list_files); do
-    grep -i '^benchmark\s+' $file | awk '{print $2}' | sed -e 's/:/\\:/g'
+    grep -i '^benchmark\s\+' $file | awk '{print $2}' | sed -e 's/:/\\:/g'
   done;
 }
 
 _cabal_components () {
   local -a components
   components=( $(_cabal_list_components) )
-  _arguments "1:components:(${components})" \
+  _arguments "*:components:(${components})" \
              ${_cabal_build_options[@]}
               
 }
 
+# test-suites, benchmarks and executables
+_cabal_all_executables () {
+  local -a components
+  components=( $(_cabal_list_all_executables) )
+  _arguments "*:components:(${components})" \
+             ${_cabal_build_options[@]}
+}
+
+# only executable components
 _cabal_executables () {
   local -a components
   components=( $(_cabal_list_executables) )
-  _arguments "1:components:(${components})" \
+  _arguments "*:components:(${components})" \
              ${_cabal_build_options[@]}
 }
+
 
 _cabal_tests () {
   local -a components
   components=( $(_cabal_list_tests) )
-  _arguments "1:components:(${components})" \
+  _arguments "*:components:(${components})" \
              ${_cabal_build_options[@]}
 }
 
 _cabal_benchmarks () {
   local -a components
   components=( $(_cabal_list_benchmarks) )
-  _arguments "1:components:(${components})" \
+  _arguments "*:components:(${components})" \
              ${_cabal_build_options[@]}
 }
 
@@ -170,6 +198,45 @@ _cabal_benchmark_pkgspecs () {
   for file in $(_cabal_list_files); do
     name=$(basename ${file} .cabal)
     [[ $(grep -i -P '^benchmark'  ${file}) ]] && pkgs+=("pkg:${name}:benches")
+  done 
+  _multi_parts ":" pkgs
+}
+# `lib:` pkgspecs
+_cabal_pkgspecs_lib () {
+  local -a pkgs
+  local cmp name
+  for cmp in $(_cabal_list_libraries); do
+    pkgs+=("lib:${cmp}")
+  done 
+  _multi_parts ":" pkgs
+}
+
+# `exec:` pkgspecs
+_cabal_pkgspecs_exec () {
+  local -a pkgs
+  local cmp name
+  for cmp in $(_cabal_list_executables); do
+    pkgs+=("exec:${cmp}")
+  done 
+  _multi_parts ":" pkgs
+}
+
+# `test:` pkgsspecs
+_cabal_pkgspecs_test () {
+  local -a pkgs
+  local cmp name
+  for cmp in $(_cabal_list_tests); do
+    pkgs+=("test:${cmp}")
+  done 
+  _multi_parts ":" pkgs
+}
+
+# `bench:` pkgspec
+_cabal_pkgspecs_bench () {
+  local -a pkgs
+  local cmp name
+  for cmp in $(_cabal_list_benchmarks); do
+    pkgs+=("bench:${cmp}")
   done 
   _multi_parts ":" pkgs
 }
@@ -344,7 +411,8 @@ _cabal_build_options=( {-h,--help} \
                      )
 
 _cabal () {
-  local context state state_descr line
+  local context state state_descr line current_word
+  current_word=$words[$CURRENT]
   typeset -A opt_args
   _arguments \
     '1: :_cabal_commands' \
@@ -353,28 +421,86 @@ _cabal () {
     command_args)
       case $words[1] in
 	build)
-	  _alternative 'cmps:components:_cabal_components' \
-		       'pkg:pkgspec:_cabal_pkgspecs'
+	  if [[ ${current_word:0:4} == "pkg:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs'
+	  elif [[ ${current_word:0:4} == "lib:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_lib'
+	  elif [[ ${current_word:0:5} == "test:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_test'
+	  elif [[ ${current_word:0:5} == "exec:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+	  elif [[ ${current_word:0:6} == "bench:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+	  else
+	    _alternative 'cmps:components:_cabal_components'
+	  fi
         ;;
 	test)
-	  _alternative 'cmps:components:_cabal_tests' \
-		       'pkg:pkgspec:_cabal_tests_pkgspecs'
+	  if [[ ${current_word:0:4} == "pkg:" ]]; then
+	    _arguments '*:pkgspec:_cabal_tests_pkgspecs'
+	  elif [[ ${current_word:0:4} == "lib:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_lib'
+	  elif [[ ${current_word:0:5} == "test:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_test'
+	  elif [[ ${current_word:0:5} == "exec:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+	  elif [[ ${current_word:0:6} == "bench:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+	  else
+	    _alternative 'cmps:components:_cabal_tests'
+	  fi
         ;;
         repl)
-	  _alternative 'cmps:components:_cabal_components' \
-                       'pkg:pkgspec:_cabal_pkgspecs'
+	  if [[ ${current_word:0:4} == "pkg:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs'
+	  elif [[ ${current_word:0:4} == "lib:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_lib'
+	  elif [[ ${current_word:0:5} == "test:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_test'
+	  elif [[ ${current_word:0:5} == "exec:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+	  elif [[ ${current_word:0:6} == "bench:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+	  else
+	    _alternative 'cmps:components:_cabal_components'
+	  fi
         ;;
 	run)
-	  _alternative 'cmps:components:_cabal_executables' \
-                       'pkg:pkgspec:_cabal_executable_pkgspecs'
+	  if [[ ${current_word:0:4} == "pkg:" ]]; then
+	    _arguments '*:pkgspec:_cabal_executable_pkgspecs'
+	  elif [[ ${current_word:0:5} == "test:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_test'
+	  elif [[ ${current_word:0:5} == "exec:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+	  elif [[ ${current_word:0:6} == "bench:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+	  else
+	    _alternative 'cmps:components:_cabal_all_executables'
+	  fi
 	;;
 	bench)
-	  _alternative 'cmps:components:_cabal_benchmarks' \
-                       'pkg:pkgspec:_cabal_benchmark_pkgspecs'
+	  if [[ ${current_word:0:4} == "pkg:" ]]; then
+	    _arguments '*:pkgspec:_cabal_benchmark_pkgspecs'
+	  elif [[ ${current_word:0:6} == "bench:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+	  else
+	    _alternative 'cmps:components:_cabal_benchmarks'
+	  fi
 	;;
 	exec)
-	  _alternative 'cmps:components:_cabal_executables' \
-                       'pkg:pkgspec:_cabal_executable_pkgspecs'
+	  if [[ ${current_word:0:4} == "pkg:" ]]; then
+	    _arguments '*:pkgspec:_cabal_executable_pkgspecs'
+	  elif [[ ${current_word:0:4} == "lib:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_lib'
+	  elif [[ ${current_word:0:5} == "test:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_test'
+	  elif [[ ${current_word:0:5} == "exec:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+	  elif [[ ${current_word:0:6} == "bench:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+	  else
+	    _alternative 'cmps:components:_cabal_all_executables'
+	  fi
 	;;
 	update)
 	  _alternative 'cmps:components:_cabal_executables' \
@@ -385,8 +511,19 @@ _cabal () {
                      ${_cabal_build_options[@]}
 	;;
 	haddock)
-	  _alternative 'cmps:components:_cabal_components' \
-                       'pkg:pkgspec:_cabal_pkgspecs'
+	  if [[ ${current_word:0:4} == "pkg:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs'
+	  elif [[ ${current_word:0:4} == "lib:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_lib'
+	  elif [[ ${current_word:0:5} == "test:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_test'
+	  elif [[ ${current_word:0:5} == "exec:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+	  elif [[ ${current_word:0:6} == "bench:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+	  else
+	    _alternative 'cmps:components:_cabal_components'
+	  fi
 	;;
 	install)
           _arguments ${_cabal_build_options[@]}
