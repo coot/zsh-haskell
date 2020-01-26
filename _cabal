@@ -49,7 +49,7 @@ _cabal_commands() {
 _cabal_list_files () {
   # find all cabal files, but do not descent into dist-newstyle, dist or
   # .stack-work directories
-  find -name "dist-newstyle" -prune , -name "dist" -prune , -name ".stack-work" -prune , -type f -name "*.cabal"
+  find -maxdepth 4 -name "dist-newstyle" -prune , -name "dist" -prune , -name ".stack-work" -prune , -type f -name "*.cabal"
 }
 
 _cabal_list_packages () {
@@ -73,7 +73,15 @@ _cabal_list_executables () {
   # find all executable components
   local file
   for file in $(_cabal_list_files); do
-    grep -i '^\(test-suite\|executable\|benchmark\)\s+' $file | awk '{print $2}' | sed -e 's/:/\\:/g'
+    grep -i '^\(test-suite\|executable\|benchmark\)\s\+' $file | awk '{print $2}' | sed -e 's/:/\\:/g'
+  done;
+}
+
+_cabal_list_tests () {
+  # find all components
+  local file cmps
+  for file in $(_cabal_list_files); do
+    grep -P '^(test-suite)\s+\S' $file | awk '{print $2}' | sed -e 's/:/\\:/g'
   done;
 }
 
@@ -96,6 +104,13 @@ _cabal_components () {
 _cabal_executables () {
   local -a components
   components=( $(_cabal_list_executables) )
+  _arguments "1:components:(${components})" \
+             ${_cabal_build_options[@]}
+}
+
+_cabal_tests () {
+  local -a components
+  components=( $(_cabal_list_tests) )
   _arguments "1:components:(${components})" \
              ${_cabal_build_options[@]}
 }
@@ -372,6 +387,9 @@ _cabal () {
 	haddock)
 	  _alternative 'cmps:components:_cabal_components' \
                        'pkg:pkgspec:_cabal_pkgspecs'
+	;;
+	install)
+          _arguments ${_cabal_build_options[@]}
 	;;
 	sdist)
 	  _arguments {-h,--help} \
