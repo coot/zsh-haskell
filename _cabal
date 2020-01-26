@@ -526,7 +526,19 @@ _cabal () {
 	  fi
 	;;
 	install)
-          _arguments ${_cabal_build_options[@]}
+	  if [[ ${current_word:0:4} == "pkg:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs'
+	  elif [[ ${current_word:0:4} == "lib:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_lib'
+	  elif [[ ${current_word:0:5} == "test:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_test'
+	  elif [[ ${current_word:0:5} == "exec:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+	  elif [[ ${current_word:0:6} == "bench:" ]]; then
+	    _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+	  else
+	    _alternative 'cmps:components:_cabal_components'
+	  fi
 	;;
 	sdist)
 	  _arguments {-h,--help} \
