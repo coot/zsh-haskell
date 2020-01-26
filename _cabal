@@ -1,3 +1,5 @@
+#compdef cabal
+#
 # Author: Marcin Szamotulski
 # Copyright: 2019
 
@@ -208,8 +210,8 @@ _cabal_build_options=( {-h,--help} \
          	       '--extra-lib-dirs:path:_files -/' \
          	       '--enable-deterministic' \
          	       '--disable-deterministic' \
-         	       '--ipid=IPID' \
-         	       '--cid=CID' \
+         	       '--ipid' \
+         	       '--cid' \
          	       '--extra-lib-dirs:extralib:_file -/' \
          	       '--extra-framework-dirs:path:_files -/' \
          	       '--extra-prog-path:path:_files -/' \
