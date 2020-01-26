@@ -119,10 +119,42 @@ _cabal_pkgspecs () {
   local file name
   for file in $(_cabal_list_files); do
     name=$(basename ${file} .cabal)
-    [[ $(grep -i '^library'    ${file}) ]] && pkgs+=("pkg:${name}:libs")
-    [[ $(grep -i '^test-suite' ${file}) ]] && pkgs+=("pkg:${name}:tests")
-    [[ $(grep -i '^benchmark'  ${file}) ]] && pkgs+=("pkg:${name}:benches")
-    [[ $(grep -i '^executable' ${file}) ]] && pkgs+=("pkg:${name}:exes")
+    [[ $(grep -i -P '^library'    ${file}) ]] && pkgs+=("pkg:${name}:libs")
+    [[ $(grep -i -P '^test-suite' ${file}) ]] && pkgs+=("pkg:${name}:tests")
+    [[ $(grep -i -P '^benchmark'  ${file}) ]] && pkgs+=("pkg:${name}:benches")
+    [[ $(grep -i -P '^executable' ${file}) ]] && pkgs+=("pkg:${name}:exes")
+  done 
+  _multi_parts ":" pkgs
+}
+
+_cabal_executable_pkgspecs () {
+  local -a pkgs
+  local file name
+  for file in $(_cabal_list_files); do
+    name=$(basename ${file} .cabal)
+    [[ $(grep -i -P '^test-suite' ${file}) ]] && pkgs+=("pkg:${name}:tests")
+    [[ $(grep -i -P '^benchmark'  ${file}) ]] && pkgs+=("pkg:${name}:benches")
+    [[ $(grep -i -P '^executable' ${file}) ]] && pkgs+=("pkg:${name}:exes")
+  done 
+  _multi_parts ":" pkgs
+}
+
+_cabal_tests_pkgspecs () {
+  local -a pkgs
+  local file name
+  for file in $(_cabal_list_files); do
+    name=$(basename ${file} .cabal)
+    [[ $(grep -i -P '^test-suite' ${file}) ]] && pkgs+=("pkg:${name}:tests")
+  done 
+  _multi_parts ":" pkgs
+}
+
+_cabal_benchmark_pkgspecs () {
+  local -a pkgs
+  local file name
+  for file in $(_cabal_list_files); do
+    name=$(basename ${file} .cabal)
+    [[ $(grep -i -P '^benchmark'  ${file}) ]] && pkgs+=("pkg:${name}:benches")
   done 
   _multi_parts ":" pkgs
 }
@@ -307,7 +339,11 @@ _cabal () {
       case $words[1] in
 	build)
 	  _alternative 'cmps:components:_cabal_components' \
-                       'pkg:pkgspec:_cabal_pkgspecs'
+		       'pkg:pkgspec:_cabal_pkgspecs'
+        ;;
+	test)
+	  _alternative 'cmps:components:_cabal_tests' \
+		       'pkg:pkgspec:_cabal_tests_pkgspecs'
         ;;
         repl)
 	  _alternative 'cmps:components:_cabal_components' \
@@ -315,19 +351,19 @@ _cabal () {
         ;;
 	run)
 	  _alternative 'cmps:components:_cabal_executables' \
-                       'pkg:pkgspec:_cabal_pkgspecs'
+                       'pkg:pkgspec:_cabal_executable_pkgspecs'
 	;;
 	bench)
 	  _alternative 'cmps:components:_cabal_benchmarks' \
-                       'pkg:pkgspec:_cabal_pkgspecs'
+                       'pkg:pkgspec:_cabal_benchmark_pkgspecs'
 	;;
 	exec)
 	  _alternative 'cmps:components:_cabal_executables' \
-                       'pkg:pkgspec:_cabal_pkgspecs'
+                       'pkg:pkgspec:_cabal_executable_pkgspecs'
 	;;
 	update)
 	  _alternative 'cmps:components:_cabal_executables' \
-                       'pkg:pkgspec:_cabal_pkgspecs'
+                       'pkg:pkgspec:_cabal_executable_pkgspecs'
         ;;
 	configure)
 	  _arguments "1:packages:_cabal_packages" \
