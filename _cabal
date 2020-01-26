@@ -6,49 +6,52 @@
 # TODO: pkgs specs of the form: pkgname:test:..
 #				pkgname:exe:...
 # TODO: is there a way to handle strings in --ghc-options (multiple options)
-# TODO: handle cabal's global options
+# TODO: -f --flag
+# TODO: --package-db
+# TODO: --with-PROG=PATH --PROG-option --PROG-options
 
 source "$(dirname ${0})/_ghc"
 
-_cabal_commands() {
-    local ret=1 state
-    _arguments ':subcommand:->subcommand' && ret=0
+_cabal_subcommands=( bench build check clean configure "exec" \
+		     fetch freeze get "gen-bounds" haddock help \
+		     hscolour info init install list outdated repl \
+		     report run sdist "test" unpack update upload \
+		     "user-config" \
+		   )
 
-    case $state in
-      subcommand)
-        subcommands=(
-          "bench:Run benchmarks"
-          "build:Compile targets within the project."
-          "check:Check the package for common mistakes"
-          "clean:Clean the package store and remove temporary files."
-          "configure:Add extra project configuration."
-          "exec:Give a command access to the store."
-          "fetch:Downloads packages for later installation."
-          "freeze:Freeze dependencies."
-          "get:Download/Extract a package's source code (repository)."
-	  "gen-bounds:Generate dependency bounds."
-          "haddock:Build Haddock documentation."
-          "help:Help about commands."
-          "hscolour:Generate HsColour colourised code, in HTML format."
-          "info:Display detailed information about a particular package."
-          "init:Create a new .cabal package file."
-          "install:Install packages."
-          "list:List packages matching a search string."
-	  "outdated:Check for outdated dependencies."
-          "repl:Open an interactive session for the given component."
-          "report:Upload build reports to a remote server."
-          "run:Run an executable."
-          "sdist:Generate a source distribution file (.tar.gz)."
-          "test:Run test-suites."
-          "unpack:Download/Extract a package's source code (repository)."
-          "update:Updates list of known packages."
-          "upload:Uploads source packages or documentation to Hackage."
-	  "user-config:Display and update the user's global cabal configuration."
-        )
-        _describe -t subcommands 'cabal subcommands' subcommands && ret=0
-    esac
-
-    return ret
+_cabal_commands () {
+    local subcommands
+    echo "_cabal_commands" >> /tmp/log
+    subcommands=(
+      "bench:Run benchmarks"
+      "build:Compile targets within the project."
+      "check:Check the package for common mistakes"
+      "clean:Clean the package store and remove temporary files."
+      "configure:Add extra project configuration."
+      "exec:Give a command access to the store."
+      "fetch:Downloads packages for later installation."
+      "freeze:Freeze dependencies."
+      "get:Download/Extract a package's source code (repository)."
+      "gen-bounds:Generate dependency bounds."
+      "haddock:Build Haddock documentation."
+      "help:Help about commands."
+      "hscolour:Generate HsColour colourised code, in HTML format."
+      "info:Display detailed information about a particular package."
+      "init:Create a new .cabal package file."
+      "install:Install packages."
+      "list:List packages matching a search string."
+      "outdated:Check for outdated dependencies."
+      "repl:Open an interactive session for the given component."
+      "report:Upload build reports to a remote server."
+      "run:Run an executable."
+      "sdist:Generate a source distribution file (.tar.gz)."
+      "test:Run test-suites."
+      "unpack:Download/Extract a package's source code (repository)."
+      "update:Updates list of known packages."
+      "upload:Uploads source packages or documentation to Hackage."
+      "user-config:Display and update the user's global cabal configuration."
+    )
+    _describe -t subcommands 'cabal subcommands' subcommands
 }
 
 _cabal_list_files () {
@@ -255,15 +258,6 @@ _cabal_find_ghc () {
   _describe -t ghcs 'ghc' ghcs
 }
 
-
-# todo:
-# cabal flags -f or --flag
-# --reject-unconstrained-dependencies
-# package db files
-# --with-PROG=PATH
-# --PROG-option
-# --PROG-options
-
 _cabal_build_options=( {-h,--help} \
          	       {-v,--verbose=}':level:(0 1 2 3)' \
          	       '--builddir:buiddir:_files -/' \
@@ -415,16 +409,48 @@ _cabal_build_options=( {-h,--help} \
 		       '--ghc-options:ghc options:_ghc' \
                      )
 
+_cabal_subcommand () {
+  local subcommands
+  _arguments "*:subcommand:(${_cabal_subcommands})"
+}
+
 _cabal () {
-  local context state state_descr line current_word
+  local context state state_descr line word current_word
+  local subcommand=""
   current_word=$words[$CURRENT]
   typeset -A opt_args
-  _arguments \
-    '1: :_cabal_commands' \
-    '*:: :->command_args'
-  case $state in
-    command_args)
-      case $words[1] in
+  for word in $words; do
+    if [[ -n ${word:*_cabal_subcommands} ]];then
+      subcommand=$word
+      break
+    fi
+  done
+  case ${subcommand:+subcommand_}"args" in
+    args)
+      # handle subcommands and global options"
+      _arguments ':subcommand:_cabal_subcommand' \
+		  {-v,--version} \
+		  '--numeric-version' \
+		  '--config-file::_file' \
+		  '--sandbox-config-file::_file' \
+		  '--defalt-user-config::_file' \
+		  '--require-sandbox' \
+		  '--no-require-sandbox' \
+		  '--ignore-sandbox' \
+		  '--ignore-expiry' \
+		  '--http-transport::_guard ".*" ""' \
+		  '--enable-nix' \
+		  '--disable-nix' \
+		  '--remote-repo::_guard ".*" ""' \
+		  '--remote-repo-cache::_file -/' \
+		  '--local-repo::_file -/' \
+		  {--logs-dir,--logsdir}'::_file -/' \
+		  '--world-file::_file' \
+		  {--store-dir,--storedir}'::_file -/'
+    ;;
+    subcommand_args)
+      # handle subcommand arguments and options
+      case ${subcommand} in
 	build)
 	  if [[ ${current_word:0:4} == "pkg:" ]]; then
 	    _arguments '*:pkgspec:_cabal_pkgspecs'
