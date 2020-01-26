@@ -358,7 +358,7 @@ _cabal_build_options=( {-h,--help} \
          	       '--disable-documentation' \
          	       '--doc-index-file=TEMPLATE' \
          	       '--dry-run' \
-         	       '--max-backjumps' \
+         	       '--max-backjumps:max backjumps:_guard "\d\+" "max backjumps"' \
          	       '--reorder-goals' \
          	       '--count-conflicts' \
          	       '--minimize-conflict-set' \
@@ -384,7 +384,7 @@ _cabal_build_options=( {-h,--help} \
          	       '--disable-per-component' \
          	       '--one-shot' \
          	       '--run-tests' \
-         	       {-j,--jobs} \
+		       {-j,--jobs}':number of jobs:' \
          	       '--keep-going' \
          	       '--offline' \
          	       '--project-file=FILE' \
