@@ -2,6 +2,11 @@
 #
 # Author: Marcin Szamotulski
 # Copyright: 2019
+#
+# TODO: pkgs specs of the form: pkgname:test:..
+#				pkgname:exe:...
+# TODO: is there a way to handle strings in --ghc-options (multiple options)
+# TODO: handle cabal's global options
 
 source "$(dirname ${0})/_ghc"
 
