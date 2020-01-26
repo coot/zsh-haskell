@@ -54,7 +54,7 @@ _cabal_commands() {
 _cabal_list_files () {
   # find all cabal files, but do not descent into dist-newstyle, dist or
   # .stack-work directories
-  find -maxdepth 4 -name "dist-newstyle" -prune , -name "dist" -prune , -name ".stack-work" -prune , -type f -name "*.cabal"
+  find -maxdepth 5 -name "dist-newstyle" -prune , -name "dist" -prune , -name ".stack-work" -prune , -name ".git" -prune , -type f -name "*.cabal"
 }
 
 _cabal_list_packages () {
