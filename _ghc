@@ -1,7 +1,7 @@
+#compdef ghc
+#
 # Author: Marcin Szamotulski
 # Copyright: 2019
-#
-#compdef ghc
 
 _ghc_packages () {
   local -a pkgs
@@ -16,11 +16,22 @@ _ghc_package_ids () {
 }
 
 _ghc () {
-  local opts
-  opts=( $(ghc --show-options | \
-	    grep -v -P '^(-pgm([acFiLlPs]|dll|lc|libtool|lowindres))$' | \
-	    grep -v -P '^(--exclude-module|-dep-makefile|-dumpdir|-hidir|-odir|-ohi)$' | \
-	    grep -v -P '^(-package-db|-package|-package-id)$' ) ) 
+  local opts current_word
+  current_word=$words[$CURRENT]
+
+  # only display -XNo options if one is explicitely assking for it
+  if [[ ${current_word:0:4} != '-XNo' ]]; then
+    opts=( $(ghc --show-options | \
+	      grep -v -P '^(-pgm([acFiLlPs]|dll|lc|libtool|lowindres))$' | \
+	      grep -v -P '^(--exclude-module|-dep-makefile|-dumpdir|-hidir|-odir|-ohi)$' | \
+	      grep -v -P '^(-package-db|-package|-package-id)$' | \
+	      grep -v '\-XNo'  ) );
+  else
+    opts=( $(ghc --show-options | \
+	      grep -v -P '^(-pgm([acFiLlPs]|dll|lc|libtool|lowindres))$' | \
+	      grep -v -P '^(--exclude-module|-dep-makefile|-dumpdir|-hidir|-odir|-ohi)$' | \
+	      grep -v -P '^(-package-db|-package|-package-id)$' ) )
+  fi
 
   _arguments ${opts} \
 	     '*-package:package:_ghc_packages' \
@@ -45,7 +56,7 @@ _ghc () {
 	     '-outputdir:directory:_files -/' \
 	     '-stubdir:directory:_files -/' \
 	     '-package-db:package-db:_files' \
-	     '-package-id:package-id:_ghc_package_ids'
+	     '-package-id:package-id:_ghc_package_ids' \
 }
 
 compdef _ghc ghc
