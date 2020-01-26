@@ -315,7 +315,7 @@ _cabal_build_options=( {-h,--help} \
          	       '--disable-executable-stripping' \
          	       '--enable-library-stripping' \
          	       '--disable-library-stripping' \
-         	       '--configure-option=OPT' \
+         	       '--configure-option::_guard ".*" ""' \
          	       '--user' \
          	       '--global' \
          	       '--package-db' \
@@ -325,7 +325,7 @@ _cabal_build_options=( {-h,--help} \
          	       '--disable-deterministic' \
          	       '--ipid' \
          	       '--cid' \
-         	       '--extra-lib-dirs:extralib:_file -/' \
+         	       '--extra-lib-dirs:extralib:_files -/' \
          	       '--extra-framework-dirs:path:_files -/' \
          	       '--extra-prog-path:path:_files -/' \
          	       '--instantiate-with' \
@@ -368,8 +368,8 @@ _cabal_build_options=( {-h,--help} \
          	       '--only-dependencies' \
          	       '--dependencies-only \
          	       ''--index-state' \
-         	       '--root-cmd::_file' \
-         	       '--symlink-bindir::_file -/' \
+         	       '--root-cmd::_files' \
+         	       '--symlink-bindir::_files -/' \
          	       '--build-summary' \
          	       '--build-log' \
          	       '--remote-build-reporting' \
@@ -381,7 +381,7 @@ _cabal_build_options=( {-h,--help} \
 		       {-j,--jobs}':number of jobs:' \
          	       '--keep-going' \
          	       '--offline' \
-         	       '--project-file=FILE' \
+         	       '--project-file::_files' \
          	       '--haddock-hoogle' \
          	       '--haddock-html' \
          	       '--haddock-html-location=URL' \
@@ -391,16 +391,16 @@ _cabal_build_options=( {-h,--help} \
          	       '--haddock-benchmarks' \
          	       '--haddock-all' \
          	       '--haddock-internal' \
-         	       '--haddock-css::_file' \
+         	       '--haddock-css::_files' \
          	       '--haddock-hyperlink-source' \
          	       '--haddock-quickjump' \
-         	       '--haddock-hscolour-css=_file' \
+         	       '--haddock-hscolour-css::_files' \
          	       '--haddock-contents-location' \
          	       '--test-log' \
          	       '--test-machine-log' \
          	       '--test-show-details' \
          	       '--test-keep-tix-files' \
-         	       '--test-wrapper::_file' \
+         	       '--test-wrapper::_files' \
          	       '--test-fail-when-no-test-suites' \
          	       '--test-options' \
          	       '--test-option' \
@@ -431,9 +431,9 @@ _cabal () {
       _arguments ':subcommand:_cabal_subcommand' \
 		  {-v,--version} \
 		  '--numeric-version' \
-		  '--config-file::_file' \
-		  '--sandbox-config-file::_file' \
-		  '--defalt-user-config::_file' \
+		  '--config-file:cabal config file:_files' \
+		  '--sandbox-config-file:sandbox config file:_files' \
+		  '--defalt-user-config:user cabal config file:_files' \
 		  '--require-sandbox' \
 		  '--no-require-sandbox' \
 		  '--ignore-sandbox' \
@@ -442,11 +442,11 @@ _cabal () {
 		  '--enable-nix' \
 		  '--disable-nix' \
 		  '--remote-repo::_guard ".*" ""' \
-		  '--remote-repo-cache::_file -/' \
-		  '--local-repo::_file -/' \
-		  {--logs-dir,--logsdir}'::_file -/' \
-		  '--world-file::_file' \
-		  {--store-dir,--storedir}'::_file -/'
+		  '--remote-repo-cache:cache directory for remote repos:_files -/' \
+		  '--local-repo::_files -/' \
+		  {--logs-dir,--logsdir}':log directory:_files -/' \
+		  '--world-file::_files' \
+		  {--store-dir,--storedir}':store directory:_files -/'
     ;;
     subcommand_args)
       # handle subcommand arguments and options
@@ -608,17 +608,17 @@ _cabal () {
 		     {-u,--homepage} \
 		     {-s,--synopsis} \
 		     {-c,--category} \
-		     {-x,--extra-source-file}':extra source file:_file' \
+		     {-x,--extra-source-file}':extra source file:_files' \
 		     {--lib,--exe,--libandexe,--tests} \
-		     '--test-dir:test dir:_file -/' \
+		     '--test-dir:test dir:_files -/' \
 		     '--simple' \
-		     '--main-is:main file:_file' \
+		     '--main-is:main file:_files' \
 		     '--language' \
 		     {-o,--expose-module} \
 		     '--extension' \
 		     {-d,--dependency} \
-		     '--application-dir:application dir:_file -/' \
-		     '--source-dir:source dir:_file -/' \
+		     '--application-dir:application dir:_files -/' \
+		     '--source-dir:source dir:_files -/' \
 		     '--build-tool' \
 		     '(-w --with-compiler)'{-w,--with-compiler}':compiler:_cabal_find_ghc' \
 
@@ -627,7 +627,7 @@ _cabal () {
 	  _arguments {-h,--help} \
 		     {-v,--verbose=}':level:(0 1 2 3)' \
 		     '--freeze-file' \
-		     '--project-file:project file:_file' \
+		     '--project-file:project file:_files' \
 		     '--simple-output' \
 		     '--exit-code' \
 		     {-q,--quiet} \
