@@ -20,18 +20,13 @@ _ghc () {
   current_word=$words[$CURRENT]
 
   # only display -XNo options if one is explicitely assking for it
-  if [[ ${current_word:0:4} != '-XNo' ]]; then
-    opts=( $(ghc --show-options | \
-	      grep -v -P '^(-pgm([acFiLlPs]|dll|lc|libtool|lowindres))$' | \
-	      grep -v -P '^(--exclude-module|-dep-makefile|-dumpdir|-hidir|-odir|-ohi)$' | \
-	      grep -v -P '^(-package-db|-package|-package-id)$' | \
-	      grep -v '\-XNo'  ) );
-  else
-    opts=( $(ghc --show-options | \
-	      grep -v -P '^(-pgm([acFiLlPs]|dll|lc|libtool|lowindres))$' | \
-	      grep -v -P '^(--exclude-module|-dep-makefile|-dumpdir|-hidir|-odir|-ohi)$' | \
-	      grep -v -P '^(-package-db|-package|-package-id)$' ) )
-  fi
+  opts=( $(ghc --show-options | \
+	    grep -v -P '^(-pgm([acFiLlPs]|dll|lc|libtool|lowindres))$' | \
+	    grep -v -P '^(--exclude-module|-dep-makefile|-dumpdir|-hidir|-odir|-ohi)$' | \
+	    grep -v -P '^(-package-db|-package|-package-id)$' | \
+	    ([[ ${current_word:0:4} != '-XNo' ]] && grep -v '^-XNo' || tee) | \
+	    ([[ ${current_word:0:4} != '-fno' ]] && grep -v '^-fno' || tee) | \
+	    ([[ ${current_word:0:4} != '-Wno' ]] && grep -v '^-Wno' || tee) ) );
 
   _arguments ${opts} \
 	     '*-package:package:_ghc_packages' \
