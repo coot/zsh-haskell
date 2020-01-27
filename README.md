@@ -21,4 +21,9 @@ The last five are only triggered when `lib:`, `exec:`, `bench:`,
 `test:` or `pkg:` are given **explicitly**.  This is in order to avoid
 providing too many completion results.
 
+# configuration
+
+* `CABAL_DEPTH` environmental variable guards the maximal directory depth for
+  searching cabal files.  By default it is set to `4`.
+
 ![](https://raw.githubusercontent.com/coot/zsh-cabal/master/docs/screencast.gif)

@@ -12,6 +12,9 @@
 
 source "$(dirname ${0})/_ghc"
 
+# Directory depth for finding "*.cabal" files.
+CABAL_DEPTH=${CABAL_DEPTH:-4}
+
 _cabal_subcommands=( bench build check clean configure "exec" \
                      fetch freeze get "gen-bounds" haddock help \
                      hscolour info init install list outdated repl \
@@ -57,7 +60,12 @@ _cabal_commands () {
 _cabal_list_files () {
   # find all cabal files, but do not descent into dist-newstyle, dist or
   # .stack-work directories
-  find -maxdepth 5 -name "dist-newstyle" -prune , -name "dist" -prune , -name ".stack-work" -prune , -name ".git" -prune , -type f -name "*.cabal"
+  find -maxdepth ${CABAL_DEPTH} \
+                 -name "dist-newstyle" -prune , \
+                 -name "dist" -prune , \
+                 -name ".stack-work" -prune , \
+                 -name ".git" -prune , \
+                 -type f -name "*.cabal"
 }
 
 _cabal_list_packages () {
