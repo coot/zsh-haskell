@@ -14,6 +14,8 @@ source "$(dirname ${0})/_ghc"
 
 # Directory depth for finding "*.cabal" files.
 CABAL_DEPTH=${CABAL_DEPTH:-4}
+which ag > /dev/null
+local ag=$([[ $? == 0 ]] && echo 0 || echo 1)
 
 _cabal_subcommands=( bench build check clean configure "exec" \
                      fetch freeze get "gen-bounds" haddock help \
@@ -60,12 +62,25 @@ _cabal_commands () {
 _cabal_list_files () {
   # find all cabal files, but do not descent into dist-newstyle, dist or
   # .stack-work directories
-  find -maxdepth ${CABAL_DEPTH} \
-                 -name "dist-newstyle" -prune , \
-                 -name "dist" -prune , \
-                 -name ".stack-work" -prune , \
-                 -name ".git" -prune , \
-                 -type f -name "*.cabal"
+  if [[ ag == 0 ]]; then
+    find -maxdepth ${CABAL_DEPTH} \
+                   -name "dist-newstyle" -prune , \
+                   -name "dist" -prune , \
+                   -name ".stack-work" -prune , \
+                   -name ".git" -prune , \
+                   -type f -name "*.cabal"
+  else
+    # `ag` is slower than `find` on shallow depth <2, about as fast for depth
+    # 4, and twice as fast for depth 8; for shallow depths the difference is
+    # not in a range that a human can feel, so this makes it better default.
+    ag --nocolor \
+       --depth ${CABAL_DEPTH} \
+       --ignore-dir "dist-newstyle" \
+       --ignore-dir "dist" \
+       --ignore-dir ".stack-workd" \
+       --ignore-dir ".git" \
+       -g "\.cabal$"
+  fi
 }
 
 _cabal_list_packages () {
