@@ -4,7 +4,7 @@
 # Copyright: 2019
 #
 # TODO: pkgs specs of the form: pkgname:test:..
-#				pkgname:exe:...
+#                               pkgname:exe:...
 # TODO: is there a way to handle strings in --ghc-options (multiple options)
 # TODO: -f --flag
 # TODO: --package-db
@@ -13,11 +13,11 @@
 source "$(dirname ${0})/_ghc"
 
 _cabal_subcommands=( bench build check clean configure "exec" \
-		     fetch freeze get "gen-bounds" haddock help \
-		     hscolour info init install list outdated repl \
-		     report run sdist "test" unpack update upload \
-		     "user-config" \
-		   )
+                     fetch freeze get "gen-bounds" haddock help \
+                     hscolour info init install list outdated repl \
+                     report run sdist "test" unpack update upload \
+                     "user-config" \
+                   )
 
 _cabal_commands () {
     local subcommands
@@ -259,154 +259,154 @@ _cabal_find_ghc () {
 }
 
 _cabal_build_options=( {-h,--help} \
-         	       {-v,--verbose=}':level:(0 1 2 3)' \
-         	       '--builddir:buiddir:_files -/' \
-         	       {-g,--ghc} \
-         	       '--ghcjs' \
-         	       '--uhc' \
-         	       '--haskell-suite' \
-         	       '--cabal-file:cabalfile:_files -g "*.cabal"' \
-         	       '(-w --with-compiler)'{-w,--with-compiler}':compiler:_cabal_find_ghc' \
-         	       '--with-hc-pkg:hcpkg:_files' \
-         	       '--prefix:dir:_files -/' \
-         	       '--binddir:dir:_files -/' \
-         	       '--libdir:dir:_files -/' \
-         	       '--libsubdir:dir:_files -/' \
-         	       '--dynlibdir:dir:_files -/' \
-         	       '--libexecdir:dir:_files -/' \
-         	       '--libexecsubdir:dir:_files -/' \
-         	       '--datadir:dir:_files -/' \
-         	       '--datasubdir:dir:_files -/' \
-         	       '--docdir:dir:_files -/' \
-         	       '--htmldir:dir:_files -/' \
-         	       '--haddockdir:dir:_files -/' \
-         	       '--sysconfdir:dir:_files -/' \
-         	       '--program-prefix' \
-         	       '--program-suffix' \
-         	       '--enable-library-vanilla' \
-         	       '--disable-library-vanilla' \
-         	       {-p,--disable-library-profiling} \
-         	       '--disable-library-profiling' \
-         	       '--enable-shared' \
-         	       '--disable-shared' \
-         	       '--enable-static' \
-         	       '--disable-static' \
-         	       '--enable-executable-dynamic' \
-         	       '--disable-executable-dynamic' \
-         	       '--enable-executable-static' \
-         	       '--disable-executable-static' \
-         	       '--enable-profiling' \
-         	       '--disable-profiling' \
-         	       '--enable-executable-profiling' \
-         	       '--disable-executable-profiling' \
-         	       '--profiling-detail:detail:(default none exported-functions all-functions)' \
-         	       '--library-profiling-detail:detail:(default none exported-functions all-functions)' \
-         	       {-O-,--enable-optimization=}':level:(0 1 2)' \
-         	       '--disable-optimisation' \
-         	       '--enable-debug-info:(0 1 2 3)' \
-         	       '--disable-debug-info' \
-         	       '--enable-library-for-ghci' \
-         	       '--disable-library-for-ghci' \
-         	       '--enable-split-sections' \
-         	       '--disable-split-sections' \
-         	       '--enable-split-objs' \
-         	       '--disable-split-objs' \
-         	       '--enable-executable-stripping' \
-         	       '--disable-executable-stripping' \
-         	       '--enable-library-stripping' \
-         	       '--disable-library-stripping' \
-         	       '--configure-option::_guard ".*" ""' \
-         	       '--user' \
-         	       '--global' \
-         	       '--package-db' \
-         	       {-f,--flags} \
-         	       '--extra-lib-dirs:path:_files -/' \
-         	       '--enable-deterministic' \
-         	       '--disable-deterministic' \
-         	       '--ipid' \
-         	       '--cid' \
-         	       '--extra-lib-dirs:extralib:_files -/' \
-         	       '--extra-framework-dirs:path:_files -/' \
-         	       '--extra-prog-path:path:_files -/' \
-         	       '--instantiate-with' \
-         	       '--enable-tests' \
-         	       '--disable-tests' \
-         	       '--enable-coverage' \
-         	       '--disable-coverage' \
-         	       '--enable-library-coverage' \
-         	       '--disable-library-coverage' \
-         	       '--enable-benchmarks' \
-         	       '--disable-benchmarks' \
-         	       '--enable-relocatable' \
-         	       '--disable-relocatable' \
-         	       '--disable-response-files' \
-         	       '--allow-depending-on-private-libs' \
-         	       '--cabal-lib-version' \
-         	       '--constraint' \
-         	       '--preference' \
-         	       '--solver' \
-         	       '--allow-older' \
-         	       '--allow-newer' \
-         	       '--write-ghc-environment-files::(always never ghc8.4.4+)' \
-         	       '--enable-documentation' \
-         	       '--disable-documentation' \
-         	       '--doc-index-file=TEMPLATE' \
-         	       '--dry-run' \
-         	       '--max-backjumps:max backjumps:_guard "\d\+" "max backjumps"' \
-         	       '--reorder-goals' \
-         	       '--count-conflicts' \
-         	       '--minimize-conflict-set' \
-         	       '--independent-goals' \
-         	       '--shadow-installed-packages' \
-         	       '--strong-flags' \
-         	       '--allow-boot-library-installs' \
-         	       '--reject-unconstrained-dependencies::(none all)' \
-         	       '--reinstall' \
-         	       '--avoid-reinstalls' \
-         	       '--force-reinstalls' \
-         	       '--upgrade-dependencies' \
-         	       '--only-dependencies' \
-         	       '--dependencies-only \
-         	       ''--index-state' \
-         	       '--root-cmd::_files' \
-         	       '--symlink-bindir::_files -/' \
-         	       '--build-summary' \
-         	       '--build-log' \
-         	       '--remote-build-reporting' \
-         	       '--report-planning-failure' \
-         	       '--enable-per-component' \
-         	       '--disable-per-component' \
-         	       '--one-shot' \
-         	       '--run-tests' \
-		       {-j,--jobs}':number of jobs:' \
-         	       '--keep-going' \
-         	       '--offline' \
-         	       '--project-file::_files' \
-         	       '--haddock-hoogle' \
-         	       '--haddock-html' \
-         	       '--haddock-html-location=URL' \
-         	       '--haddock-for-hackage' \
-         	       '--haddock-executables' \
-         	       '--haddock-tests' \
-         	       '--haddock-benchmarks' \
-         	       '--haddock-all' \
-         	       '--haddock-internal' \
-         	       '--haddock-css::_files' \
-         	       '--haddock-hyperlink-source' \
-         	       '--haddock-quickjump' \
-         	       '--haddock-hscolour-css::_files' \
-         	       '--haddock-contents-location' \
-         	       '--test-log' \
-         	       '--test-machine-log' \
-         	       '--test-show-details' \
-         	       '--test-keep-tix-files' \
-         	       '--test-wrapper::_files' \
-         	       '--test-fail-when-no-test-suites' \
-         	       '--test-options' \
-         	       '--test-option' \
+                       {-v,--verbose=}':level:(0 1 2 3)' \
+                       '--builddir:buiddir:_files -/' \
+                       {-g,--ghc} \
+                       '--ghcjs' \
+                       '--uhc' \
+                       '--haskell-suite' \
+                       '--cabal-file:cabalfile:_files -g "*.cabal"' \
+                       '(-w --with-compiler)'{-w,--with-compiler}':compiler:_cabal_find_ghc' \
+                       '--with-hc-pkg:hcpkg:_files' \
+                       '--prefix:dir:_files -/' \
+                       '--binddir:dir:_files -/' \
+                       '--libdir:dir:_files -/' \
+                       '--libsubdir:dir:_files -/' \
+                       '--dynlibdir:dir:_files -/' \
+                       '--libexecdir:dir:_files -/' \
+                       '--libexecsubdir:dir:_files -/' \
+                       '--datadir:dir:_files -/' \
+                       '--datasubdir:dir:_files -/' \
+                       '--docdir:dir:_files -/' \
+                       '--htmldir:dir:_files -/' \
+                       '--haddockdir:dir:_files -/' \
+                       '--sysconfdir:dir:_files -/' \
+                       '--program-prefix' \
+                       '--program-suffix' \
+                       '--enable-library-vanilla' \
+                       '--disable-library-vanilla' \
+                       {-p,--disable-library-profiling} \
+                       '--disable-library-profiling' \
+                       '--enable-shared' \
+                       '--disable-shared' \
+                       '--enable-static' \
+                       '--disable-static' \
+                       '--enable-executable-dynamic' \
+                       '--disable-executable-dynamic' \
+                       '--enable-executable-static' \
+                       '--disable-executable-static' \
+                       '--enable-profiling' \
+                       '--disable-profiling' \
+                       '--enable-executable-profiling' \
+                       '--disable-executable-profiling' \
+                       '--profiling-detail:detail:(default none exported-functions all-functions)' \
+                       '--library-profiling-detail:detail:(default none exported-functions all-functions)' \
+                       {-O-,--enable-optimization=}':level:(0 1 2)' \
+                       '--disable-optimisation' \
+                       '--enable-debug-info:(0 1 2 3)' \
+                       '--disable-debug-info' \
+                       '--enable-library-for-ghci' \
+                       '--disable-library-for-ghci' \
+                       '--enable-split-sections' \
+                       '--disable-split-sections' \
+                       '--enable-split-objs' \
+                       '--disable-split-objs' \
+                       '--enable-executable-stripping' \
+                       '--disable-executable-stripping' \
+                       '--enable-library-stripping' \
+                       '--disable-library-stripping' \
+                       '--configure-option::_guard ".*" ""' \
+                       '--user' \
+                       '--global' \
+                       '--package-db' \
+                       {-f,--flags} \
+                       '--extra-lib-dirs:path:_files -/' \
+                       '--enable-deterministic' \
+                       '--disable-deterministic' \
+                       '--ipid' \
+                       '--cid' \
+                       '--extra-lib-dirs:extralib:_files -/' \
+                       '--extra-framework-dirs:path:_files -/' \
+                       '--extra-prog-path:path:_files -/' \
+                       '--instantiate-with' \
+                       '--enable-tests' \
+                       '--disable-tests' \
+                       '--enable-coverage' \
+                       '--disable-coverage' \
+                       '--enable-library-coverage' \
+                       '--disable-library-coverage' \
+                       '--enable-benchmarks' \
+                       '--disable-benchmarks' \
+                       '--enable-relocatable' \
+                       '--disable-relocatable' \
+                       '--disable-response-files' \
+                       '--allow-depending-on-private-libs' \
+                       '--cabal-lib-version' \
+                       '--constraint' \
+                       '--preference' \
+                       '--solver' \
+                       '--allow-older' \
+                       '--allow-newer' \
+                       '--write-ghc-environment-files::(always never ghc8.4.4+)' \
+                       '--enable-documentation' \
+                       '--disable-documentation' \
+                       '--doc-index-file=TEMPLATE' \
+                       '--dry-run' \
+                       '--max-backjumps:max backjumps:_guard "\d\+" "max backjumps"' \
+                       '--reorder-goals' \
+                       '--count-conflicts' \
+                       '--minimize-conflict-set' \
+                       '--independent-goals' \
+                       '--shadow-installed-packages' \
+                       '--strong-flags' \
+                       '--allow-boot-library-installs' \
+                       '--reject-unconstrained-dependencies::(none all)' \
+                       '--reinstall' \
+                       '--avoid-reinstalls' \
+                       '--force-reinstalls' \
+                       '--upgrade-dependencies' \
+                       '--only-dependencies' \
+                       '--dependencies-only \
+                       ''--index-state' \
+                       '--root-cmd::_files' \
+                       '--symlink-bindir::_files -/' \
+                       '--build-summary' \
+                       '--build-log' \
+                       '--remote-build-reporting' \
+                       '--report-planning-failure' \
+                       '--enable-per-component' \
+                       '--disable-per-component' \
+                       '--one-shot' \
+                       '--run-tests' \
+                       {-j,--jobs}':number of jobs:' \
+                       '--keep-going' \
+                       '--offline' \
+                       '--project-file::_files' \
+                       '--haddock-hoogle' \
+                       '--haddock-html' \
+                       '--haddock-html-location=URL' \
+                       '--haddock-for-hackage' \
+                       '--haddock-executables' \
+                       '--haddock-tests' \
+                       '--haddock-benchmarks' \
+                       '--haddock-all' \
+                       '--haddock-internal' \
+                       '--haddock-css::_files' \
+                       '--haddock-hyperlink-source' \
+                       '--haddock-quickjump' \
+                       '--haddock-hscolour-css::_files' \
+                       '--haddock-contents-location' \
+                       '--test-log' \
+                       '--test-machine-log' \
+                       '--test-show-details' \
+                       '--test-keep-tix-files' \
+                       '--test-wrapper::_files' \
+                       '--test-fail-when-no-test-suites' \
+                       '--test-options' \
+                       '--test-option' \
                        '--only-configure' \
-		       '--ghc-option:ghc option:_ghc' \
-		       '--ghc-options:ghc options:_ghc' \
+                       '--ghc-option:ghc option:_ghc' \
+                       '--ghc-options:ghc options:_ghc' \
                      )
 
 _cabal_subcommand () {
@@ -429,215 +429,215 @@ _cabal () {
     args)
       # handle subcommands and global options"
       _arguments ':subcommand:_cabal_subcommand' \
-		  {-v,--version} \
-		  '--numeric-version' \
-		  '--config-file:cabal config file:_files' \
-		  '--sandbox-config-file:sandbox config file:_files' \
-		  '--defalt-user-config:user cabal config file:_files' \
-		  '--require-sandbox' \
-		  '--no-require-sandbox' \
-		  '--ignore-sandbox' \
-		  '--ignore-expiry' \
-		  '--http-transport::_guard ".*" ""' \
-		  '--enable-nix' \
-		  '--disable-nix' \
-		  '--remote-repo::_guard ".*" ""' \
-		  '--remote-repo-cache:cache directory for remote repos:_files -/' \
-		  '--local-repo::_files -/' \
-		  {--logs-dir,--logsdir}':log directory:_files -/' \
-		  '--world-file::_files' \
-		  {--store-dir,--storedir}':store directory:_files -/'
+                  {-v,--version} \
+                  '--numeric-version' \
+                  '--config-file:cabal config file:_files' \
+                  '--sandbox-config-file:sandbox config file:_files' \
+                  '--defalt-user-config:user cabal config file:_files' \
+                  '--require-sandbox' \
+                  '--no-require-sandbox' \
+                  '--ignore-sandbox' \
+                  '--ignore-expiry' \
+                  '--http-transport::_guard ".*" ""' \
+                  '--enable-nix' \
+                  '--disable-nix' \
+                  '--remote-repo::_guard ".*" ""' \
+                  '--remote-repo-cache:cache directory for remote repos:_files -/' \
+                  '--local-repo::_files -/' \
+                  {--logs-dir,--logsdir}':log directory:_files -/' \
+                  '--world-file::_files' \
+                  {--store-dir,--storedir}':store directory:_files -/'
     ;;
     subcommand_args)
       # handle subcommand arguments and options
       case ${subcommand} in
-	build)
-	  if [[ ${current_word:0:4} == "pkg:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs'
-	  elif [[ ${current_word:0:4} == "lib:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_lib'
-	  elif [[ ${current_word:0:5} == "test:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_test'
-	  elif [[ ${current_word:0:5} == "exec:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_exec'
-	  elif [[ ${current_word:0:6} == "bench:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_bench'
-	  else
-	    _alternative 'cmps:components:_cabal_components'
-	  fi
+        build)
+          if [[ ${current_word:0:4} == "pkg:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs'
+          elif [[ ${current_word:0:4} == "lib:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_lib'
+          elif [[ ${current_word:0:5} == "test:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_test'
+          elif [[ ${current_word:0:5} == "exec:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+          elif [[ ${current_word:0:6} == "bench:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+          else
+            _alternative 'cmps:components:_cabal_components'
+          fi
         ;;
-	test)
-	  if [[ ${current_word:0:4} == "pkg:" ]]; then
-	    _arguments '*:pkgspec:_cabal_tests_pkgspecs'
-	  elif [[ ${current_word:0:4} == "lib:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_lib'
-	  elif [[ ${current_word:0:5} == "test:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_test'
-	  elif [[ ${current_word:0:5} == "exec:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_exec'
-	  elif [[ ${current_word:0:6} == "bench:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_bench'
-	  else
-	    _alternative 'cmps:components:_cabal_tests'
-	  fi
+        test)
+          if [[ ${current_word:0:4} == "pkg:" ]]; then
+            _arguments '*:pkgspec:_cabal_tests_pkgspecs'
+          elif [[ ${current_word:0:4} == "lib:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_lib'
+          elif [[ ${current_word:0:5} == "test:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_test'
+          elif [[ ${current_word:0:5} == "exec:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+          elif [[ ${current_word:0:6} == "bench:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+          else
+            _alternative 'cmps:components:_cabal_tests'
+          fi
         ;;
         repl)
-	  if [[ ${current_word:0:4} == "pkg:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs'
-	  elif [[ ${current_word:0:4} == "lib:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_lib'
-	  elif [[ ${current_word:0:5} == "test:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_test'
-	  elif [[ ${current_word:0:5} == "exec:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_exec'
-	  elif [[ ${current_word:0:6} == "bench:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_bench'
-	  else
-	    _alternative 'cmps:components:_cabal_components'
-	  fi
+          if [[ ${current_word:0:4} == "pkg:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs'
+          elif [[ ${current_word:0:4} == "lib:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_lib'
+          elif [[ ${current_word:0:5} == "test:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_test'
+          elif [[ ${current_word:0:5} == "exec:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+          elif [[ ${current_word:0:6} == "bench:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+          else
+            _alternative 'cmps:components:_cabal_components'
+          fi
         ;;
-	run)
-	  if [[ ${current_word:0:4} == "pkg:" ]]; then
-	    _arguments '*:pkgspec:_cabal_executable_pkgspecs'
-	  elif [[ ${current_word:0:5} == "test:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_test'
-	  elif [[ ${current_word:0:5} == "exec:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_exec'
-	  elif [[ ${current_word:0:6} == "bench:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_bench'
-	  else
-	    _alternative 'cmps:components:_cabal_all_executables'
-	  fi
-	;;
-	bench)
-	  if [[ ${current_word:0:4} == "pkg:" ]]; then
-	    _arguments '*:pkgspec:_cabal_benchmark_pkgspecs'
-	  elif [[ ${current_word:0:6} == "bench:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_bench'
-	  else
-	    _alternative 'cmps:components:_cabal_benchmarks'
-	  fi
-	;;
-	exec)
-	  if [[ ${current_word:0:4} == "pkg:" ]]; then
-	    _arguments '*:pkgspec:_cabal_executable_pkgspecs'
-	  elif [[ ${current_word:0:4} == "lib:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_lib'
-	  elif [[ ${current_word:0:5} == "test:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_test'
-	  elif [[ ${current_word:0:5} == "exec:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_exec'
-	  elif [[ ${current_word:0:6} == "bench:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_bench'
-	  else
-	    _alternative 'cmps:components:_cabal_all_executables'
-	  fi
-	;;
-	update)
-	  _alternative 'cmps:components:_cabal_executables' \
+        run)
+          if [[ ${current_word:0:4} == "pkg:" ]]; then
+            _arguments '*:pkgspec:_cabal_executable_pkgspecs'
+          elif [[ ${current_word:0:5} == "test:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_test'
+          elif [[ ${current_word:0:5} == "exec:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+          elif [[ ${current_word:0:6} == "bench:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+          else
+            _alternative 'cmps:components:_cabal_all_executables'
+          fi
+        ;;
+        bench)
+          if [[ ${current_word:0:4} == "pkg:" ]]; then
+            _arguments '*:pkgspec:_cabal_benchmark_pkgspecs'
+          elif [[ ${current_word:0:6} == "bench:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+          else
+            _alternative 'cmps:components:_cabal_benchmarks'
+          fi
+        ;;
+        exec)
+          if [[ ${current_word:0:4} == "pkg:" ]]; then
+            _arguments '*:pkgspec:_cabal_executable_pkgspecs'
+          elif [[ ${current_word:0:4} == "lib:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_lib'
+          elif [[ ${current_word:0:5} == "test:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_test'
+          elif [[ ${current_word:0:5} == "exec:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+          elif [[ ${current_word:0:6} == "bench:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+          else
+            _alternative 'cmps:components:_cabal_all_executables'
+          fi
+        ;;
+        update)
+          _alternative 'cmps:components:_cabal_executables' \
                        'pkg:pkgspec:_cabal_executable_pkgspecs'
         ;;
-	configure)
-	  _arguments "1:packages:_cabal_packages" \
+        configure)
+          _arguments "1:packages:_cabal_packages" \
                      ${_cabal_build_options[@]}
-	;;
-	haddock)
-	  if [[ ${current_word:0:4} == "pkg:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs'
-	  elif [[ ${current_word:0:4} == "lib:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_lib'
-	  elif [[ ${current_word:0:5} == "test:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_test'
-	  elif [[ ${current_word:0:5} == "exec:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_exec'
-	  elif [[ ${current_word:0:6} == "bench:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_bench'
-	  else
-	    _alternative 'cmps:components:_cabal_components'
-	  fi
-	;;
-	install)
-	  if [[ ${current_word:0:4} == "pkg:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs'
-	  elif [[ ${current_word:0:4} == "lib:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_lib'
-	  elif [[ ${current_word:0:5} == "test:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_test'
-	  elif [[ ${current_word:0:5} == "exec:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_exec'
-	  elif [[ ${current_word:0:6} == "bench:" ]]; then
-	    _arguments '*:pkgspec:_cabal_pkgspecs_bench'
-	  else
-	    _alternative 'cmps:components:_cabal_components'
-	  fi
-	;;
-	sdist)
-	  _arguments {-h,--help} \
-		     {-v,--verbose=}':level:(0 1 2 3)' \
-		     '--builddir:buiddir:_files -/' \
-		     '--project-file:projectfile:_files' \
-		     {-l,--list-only} \
-		     {-z,--null-sep} \
-		     {-o,--output-dir}':outputdir:_files -/'
-	;;
-	upload)
-	  _arguments {-h,--help} \
-		     {-v,--verbose=}':level:(0 1 2 3)' \
-		     '--publish' \
-		     {-d,--documentation} \
-		     {-u,--username} \
-		     {-p,--password} \
-		     {-P,--password-command} \
-		     '1:targiles:_files'
-	;;
-	init)
-	  _arguments {-h,--help} \
-		     {-v,--verbose=}':level:(0 1 2 3)' \
-		     {-i,--interactive} \
-		     {-n,--non-interactive} \
-		     {-q,--quite} \
-		     {-m,--minimal} \
-		     '--overwrite' \
-		     '--package-dir:package directory:_files -/' \
-		     {-p,--package-name} \
-		     '--version' \
-		     '--cabal-version' \
-		     {-l,--license} \
-		     {-a,--author} \
-		     {-e,--email} \
-		     {-u,--homepage} \
-		     {-s,--synopsis} \
-		     {-c,--category} \
-		     {-x,--extra-source-file}':extra source file:_files' \
-		     {--lib,--exe,--libandexe,--tests} \
-		     '--test-dir:test dir:_files -/' \
-		     '--simple' \
-		     '--main-is:main file:_files' \
-		     '--language' \
-		     {-o,--expose-module} \
-		     '--extension' \
-		     {-d,--dependency} \
-		     '--application-dir:application dir:_files -/' \
-		     '--source-dir:source dir:_files -/' \
-		     '--build-tool' \
-		     '(-w --with-compiler)'{-w,--with-compiler}':compiler:_cabal_find_ghc' \
+        ;;
+        haddock)
+          if [[ ${current_word:0:4} == "pkg:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs'
+          elif [[ ${current_word:0:4} == "lib:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_lib'
+          elif [[ ${current_word:0:5} == "test:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_test'
+          elif [[ ${current_word:0:5} == "exec:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+          elif [[ ${current_word:0:6} == "bench:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+          else
+            _alternative 'cmps:components:_cabal_components'
+          fi
+        ;;
+        install)
+          if [[ ${current_word:0:4} == "pkg:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs'
+          elif [[ ${current_word:0:4} == "lib:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_lib'
+          elif [[ ${current_word:0:5} == "test:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_test'
+          elif [[ ${current_word:0:5} == "exec:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+          elif [[ ${current_word:0:6} == "bench:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+          else
+            _alternative 'cmps:components:_cabal_components'
+          fi
+        ;;
+        sdist)
+          _arguments {-h,--help} \
+                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     '--builddir:buiddir:_files -/' \
+                     '--project-file:projectfile:_files' \
+                     {-l,--list-only} \
+                     {-z,--null-sep} \
+                     {-o,--output-dir}':outputdir:_files -/'
+        ;;
+        upload)
+          _arguments {-h,--help} \
+                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     '--publish' \
+                     {-d,--documentation} \
+                     {-u,--username} \
+                     {-p,--password} \
+                     {-P,--password-command} \
+                     '1:targiles:_files'
+        ;;
+        init)
+          _arguments {-h,--help} \
+                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     {-i,--interactive} \
+                     {-n,--non-interactive} \
+                     {-q,--quite} \
+                     {-m,--minimal} \
+                     '--overwrite' \
+                     '--package-dir:package directory:_files -/' \
+                     {-p,--package-name} \
+                     '--version' \
+                     '--cabal-version' \
+                     {-l,--license} \
+                     {-a,--author} \
+                     {-e,--email} \
+                     {-u,--homepage} \
+                     {-s,--synopsis} \
+                     {-c,--category} \
+                     {-x,--extra-source-file}':extra source file:_files' \
+                     {--lib,--exe,--libandexe,--tests} \
+                     '--test-dir:test dir:_files -/' \
+                     '--simple' \
+                     '--main-is:main file:_files' \
+                     '--language' \
+                     {-o,--expose-module} \
+                     '--extension' \
+                     {-d,--dependency} \
+                     '--application-dir:application dir:_files -/' \
+                     '--source-dir:source dir:_files -/' \
+                     '--build-tool' \
+                     '(-w --with-compiler)'{-w,--with-compiler}':compiler:_cabal_find_ghc' \
 
-	;;
-	outdated)
-	  _arguments {-h,--help} \
-		     {-v,--verbose=}':level:(0 1 2 3)' \
-		     '--freeze-file' \
-		     '--project-file:project file:_files' \
-		     '--simple-output' \
-		     '--exit-code' \
-		     {-q,--quiet} \
-		     '--ignore' \
-		     '--minor'
-	;;
+        ;;
+        outdated)
+          _arguments {-h,--help} \
+                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     '--freeze-file' \
+                     '--project-file:project file:_files' \
+                     '--simple-output' \
+                     '--exit-code' \
+                     {-q,--quiet} \
+                     '--ignore' \
+                     '--minor'
+        ;;
       esac
   esac
 }
 
 compdef _cabal cabal
 
-# vim:ft=zsh
+# vim:ft=zsh:expandtab

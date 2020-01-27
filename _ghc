@@ -58,4 +58,4 @@ _ghc () {
 compdef _ghc ghc
 compdef _ghc ghci
 
-# vim:ft=zsh
+# vim:ft=zsh:expandtab
