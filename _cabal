@@ -209,6 +209,7 @@ _cabal_benchmark_pkgspecs () {
   done 
   _multi_parts ":" pkgs
 }
+
 # `lib:` pkgspecs
 _cabal_pkgspecs_lib () {
   local -a pkgs
@@ -219,17 +220,17 @@ _cabal_pkgspecs_lib () {
   _multi_parts ":" pkgs
 }
 
-# `exec:` pkgspecs
-_cabal_pkgspecs_exec () {
+# `exe:` pkgspecs
+_cabal_pkgspecs_exe () {
   local -a pkgs
   local cmp name
   for cmp in $(_cabal_list_executables); do
-    pkgs+=("exec:${cmp}")
+    pkgs+=("exe:${cmp}")
   done 
   _multi_parts ":" pkgs
 }
 
-# `test:` pkgsspecs
+# `test:` pkgspecs
 _cabal_pkgspecs_test () {
   local -a pkgs
   local cmp name
@@ -458,8 +459,8 @@ _cabal () {
             _arguments '*:pkgspec:_cabal_pkgspecs_lib'
           elif [[ ${current_word:0:5} == "test:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_test'
-          elif [[ ${current_word:0:5} == "exec:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+          elif [[ ${current_word:0:4} == "exe:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_exe'
           elif [[ ${current_word:0:6} == "bench:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_bench'
           else
@@ -473,8 +474,8 @@ _cabal () {
             _arguments '*:pkgspec:_cabal_pkgspecs_lib'
           elif [[ ${current_word:0:5} == "test:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_test'
-          elif [[ ${current_word:0:5} == "exec:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+          elif [[ ${current_word:0:4} == "exe:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_exe'
           elif [[ ${current_word:0:6} == "bench:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_bench'
           else
@@ -488,8 +489,8 @@ _cabal () {
             _arguments '*:pkgspec:_cabal_pkgspecs_lib'
           elif [[ ${current_word:0:5} == "test:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_test'
-          elif [[ ${current_word:0:5} == "exec:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+          elif [[ ${current_word:0:4} == "exe:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_exe'
           elif [[ ${current_word:0:6} == "bench:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_bench'
           else
@@ -501,8 +502,8 @@ _cabal () {
             _arguments '*:pkgspec:_cabal_executable_pkgspecs'
           elif [[ ${current_word:0:5} == "test:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_test'
-          elif [[ ${current_word:0:5} == "exec:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+          elif [[ ${current_word:0:4} == "exe:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_exe'
           elif [[ ${current_word:0:6} == "bench:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_bench'
           else
@@ -525,8 +526,8 @@ _cabal () {
             _arguments '*:pkgspec:_cabal_pkgspecs_lib'
           elif [[ ${current_word:0:5} == "test:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_test'
-          elif [[ ${current_word:0:5} == "exec:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+          elif [[ ${current_word:0:4} == "exe:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_exe'
           elif [[ ${current_word:0:6} == "bench:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_bench'
           else
@@ -548,8 +549,8 @@ _cabal () {
             _arguments '*:pkgspec:_cabal_pkgspecs_lib'
           elif [[ ${current_word:0:5} == "test:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_test'
-          elif [[ ${current_word:0:5} == "exec:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+          elif [[ ${current_word:0:4} == "exe:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_exe'
           elif [[ ${current_word:0:6} == "bench:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_bench'
           else
@@ -563,8 +564,8 @@ _cabal () {
             _arguments '*:pkgspec:_cabal_pkgspecs_lib'
           elif [[ ${current_word:0:5} == "test:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_test'
-          elif [[ ${current_word:0:5} == "exec:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_exec'
+          elif [[ ${current_word:0:4} == "exe:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_exe'
           elif [[ ${current_word:0:6} == "bench:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_bench'
           else
