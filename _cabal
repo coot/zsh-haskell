@@ -72,7 +72,7 @@ _cabal_list_packages () {
   # find all cabal packages
   local file
   for file in $(_cabal_list_files); do
-    grep '^\s*name:' $file | awk '{print $2}'
+    basename ${file} .cabal
   done;
 }
 
