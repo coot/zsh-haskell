@@ -202,6 +202,7 @@ _cabal_pkgspecs () {
     [[ $(grep -s -i -P '^benchmark'  ${file} 2>/dev/null) ]] && pkgs+=("pkg:${name}:benches")
     [[ $(grep -s -i -P '^executable' ${file} 2>/dev/null) ]] && pkgs+=("pkg:${name}:exes")
   done 
+  # not using -i, this way pkg:${name} will be alway at hand
   _multi_parts ":" pkgs
 }
 
@@ -214,7 +215,7 @@ _cabal_executable_pkgspecs () {
     [[ $(grep -s -i -P '^benchmark'  ${file} 2>/dev/null) ]] && pkgs+=("pkg:${name}:benches")
     [[ $(grep -s -i -P '^executable' ${file} 2>/dev/null) ]] && pkgs+=("pkg:${name}:exes")
   done 
-  _multi_parts ":" pkgs
+  _multi_parts -i ":" pkgs
 }
 
 _cabal_tests_pkgspecs () {
@@ -224,7 +225,7 @@ _cabal_tests_pkgspecs () {
     name=$(basename ${file} .cabal)
     [[ $(grep -s -i -P '^test-suite' ${file} 2>/dev/null) ]] && pkgs+=("pkg:${name}:tests")
   done 
-  _multi_parts ":" pkgs
+  _multi_parts -i ":" pkgs
 }
 
 _cabal_benchmark_pkgspecs () {
@@ -234,7 +235,7 @@ _cabal_benchmark_pkgspecs () {
     name=$(basename ${file} .cabal)
     [[ $(grep -s -i -P '^benchmark'  ${file} 2>/dev/null) ]] && pkgs+=("pkg:${name}:benches")
   done 
-  _multi_parts ":" pkgs
+  _multi_parts -i ":" pkgs
 }
 
 # `lib:` pkgspecs
