@@ -95,8 +95,10 @@ _cabal_list_components () {
   # find all components
   local file cmps
   for file in $(_cabal_list_files); do
-    grep -s -P '^(test-suite|executable|benchmark|library)\s+\S' $file 2>/dev/null | awk '{print $2}' | sed -e 's/:/\\:/g'
-    [[ $(grep -s -i "^library\s*$" ${file}) ]] && echo $(basename ${file} .cabal)" " 2>/dev/null | sed -e 's/:/\\:/g';
+    grep -s -P '^(test-suite|executable|benchmark|library)\s+\S' $file 2>/dev/null \
+      | awk '{print $2}' | sed -e 's/:/\\:/g'
+    [[ $(grep -s -i "^library\s*$" ${file}) ]] \
+      && echo $(basename ${file} .cabal)" " 2>/dev/null | sed -e 's/:/\\:/g';
   done;
 }
 
@@ -105,7 +107,8 @@ _cabal_list_libraries () {
   local file cmps
   for file in $(_cabal_list_files); do
     grep -s -P '^library\s+\S' $file | awk '{print $2}' | sed -e 's/:/\\:/g' 2>/dev/null
-    [[ $(grep -s -i "^library\s*$" ${file}) ]] && echo $(basename ${file} .cabal)" " 2>/dev/null | sed -e 's/:/\\:/g';
+    [[ $(grep -s -i "^library\s*$" ${file}) ]] \
+      && echo $(basename ${file} .cabal)" " 2>/dev/null | sed -e 's/:/\\:/g';
   done;
 }
 
@@ -114,7 +117,8 @@ _cabal_list_all_executables () {
   # find all executable components
   local file
   for file in $(_cabal_list_files); do
-    grep -s -i '^\(test-suite\|executable\|benchmark\)\s\+' $file 2>/dev/null | awk '{print $2}' | sed -e 's/:/\\:/g'
+    grep -s -i '^\(test-suite\|executable\|benchmark\)\s\+' $file 2>/dev/null \
+      | awk '{print $2}' | sed -e 's/:/\\:/g'
   done;
 }
 
