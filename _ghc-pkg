@@ -1,0 +1,77 @@
+# Author: Marcin Szamotulski
+# Copyright: 2019
+#
+# TODO: --package-db expand the argument: ~/package.db -> /home/user/package.db
+
+_ghc-pkg_commands () {
+  local commands
+  commands=(
+    "init:Create and initialise a package database at the location {path}."
+    "register:Register the package using the specified installed packageupdate: description."
+    "update:Register the package, overwriting any other package with the same name."
+    "unregister:Unregister the specified packages in the order given."
+    "expose:Expose the specified package."
+    "hide:Hide the specified package."
+    "trust:Trust the specified package."
+    "distrust:Distrust the specified package."
+    "list:List registered packages in the global database, and also the user database if --user is given."
+    "dot:Generate a graph of the package dependencies in a form suitable for input for the graphviz tools."
+    "find:List registered packages exposing module {module} in the global database, and also the user database if --user is given."
+    "latest:Prints the highest registered version of a package."
+    "check:Check the consistency of package dependencies and list broken packages."
+    "describe:Give the registered description for the specified package."
+    "field:Extract the specified field of the package description for the specified package."
+    "dump:Dump the registered description for every package."
+    "recache:Regenerate the package database cache."
+  )
+  _describe -t ghc-pkg-commands 'ghc-pkg commands' commands
+}
+
+_ghc-pkg () {
+  _arguments '--package-db=:package db:_files' \
+             '--package-conf=:package conf:_files' \
+             '--global-package-db=:global package db:_files -/' \
+             '--no-user-package-db' \
+             '--force' \
+             '--force-files' \
+             '--enable-multi-instance' \
+             '--enable-multi-instance' \
+             '--expand-env-vars' \
+             '--expand-pkgroot' \
+             '--no-expand-pkgroot' \
+             '-?' \
+             '--help' \
+             '-V' \
+             '--version' \
+             '--simple-output' \
+             '--names-only' \
+             '--simple-output' \
+             {--ipid,--unit-id}':interpret package arguments as unit IDs' \
+             {-v,--verbose=}':level:(0 1 2 3)' \
+             '*:: :->command-argument' \
+             '1:commands:->command' && ret=0
+
+  case $state in
+    (command)
+      _ghc-pkg_commands
+      ;;
+    (command-argument)
+      case $words[1] in
+        ("init")
+          _arguments ':path:_files'
+          break
+          ;;
+        ("register")
+          _arguments ':filename:_files'
+          break
+          ;;
+        ("update")
+          _arguments ':filename:_files'
+          break
+      esac
+      ;;
+  esac
+}
+
+compdef _ghc-pkg ghc-pkg
+# vim:ft=zsh:expandtab
