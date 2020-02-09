@@ -26,7 +26,6 @@ _cabal_subcommands=( bench build check clean configure "exec" \
 
 _cabal_commands () {
     local subcommands
-    echo "_cabal_commands" >> /tmp/log
     subcommands=(
       "bench:Run benchmarks"
       "build:Compile targets within the project."
