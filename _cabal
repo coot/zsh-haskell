@@ -585,59 +585,67 @@ _cabal () {
           fi
         ;;
         sdist)
-          _arguments {-h,--help} \
+          _arguments '::' \
+                     {-h,--help} \
                      {-v,--verbose=}':level:(0 1 2 3)' \
-                     '--builddir:buiddir:_files -/' \
-                     '--project-file:projectfile:_files' \
+                     '--builddir=:buiddir:_files -/' \
+                     '--project-file=:projectfile:_files' \
                      {-l,--list-only} \
                      {-z,--null-sep} \
                      {-o,--output-dir}':outputdir:_files -/'
         ;;
         upload)
-          _arguments {-h,--help} \
+          _arguments '::' \
+                     {-h,--help} \
                      {-v,--verbose=}':level:(0 1 2 3)' \
                      '--publish' \
                      {-d,--documentation} \
                      {-u,--username} \
                      {-p,--password} \
                      {-P,--password-command} \
-                     '1:targiles:_files'
+                     '1:tar files:_files'
         ;;
         init)
-          _arguments {-h,--help} \
-                     {-v,--verbose=}':level:(0 1 2 3)' \
+          # TODO: better _guards
+          _arguments ':init:' \
+                     {-h,--help} \
                      {-i,--interactive} \
                      {-n,--non-interactive} \
-                     {-q,--quite} \
+                     {-q,--quiet} \
+                     '--no-comments' \
                      {-m,--minimal} \
                      '--overwrite' \
-                     '--package-dir:package directory:_files -/' \
-                     {-p,--package-name} \
-                     '--version' \
-                     '--cabal-version' \
-                     {-l,--license} \
-                     {-a,--author} \
-                     {-e,--email} \
-                     {-u,--homepage} \
-                     {-s,--synopsis} \
-                     {-c,--category} \
-                     {-x,--extra-source-file}':extra source file:_files' \
-                     {--lib,--exe,--libandexe,--tests} \
-                     '--test-dir:test dir:_files -/' \
-                     '--simple' \
-                     '--main-is:main file:_files' \
-                     '--language' \
-                     {-o,--expose-module} \
-                     '--extension' \
-                     {-d,--dependency} \
-                     '--application-dir:application dir:_files -/' \
-                     '--source-dir:source dir:_files -/' \
-                     '--build-tool' \
-                     '(-w --with-compiler)'{-w,--with-compiler}':compiler:_cabal_find_ghc' \
-
+                     '--package-dir=:Root directory of the package (default = current directory).:_files -/' \
+                     {-p,--package-name=}':Name of the Cabal package to create.:_guard ".\+"' \
+                     '--version=:Initial version of the package.:_guard ".\+"' \
+                     '--cabal-version=:Version of the Cabal specification.:_guard ".\+"' \
+                     {-l,--license=}':Project license.:_guard ".\+"' \
+                     {-a,--author=}":Name of the project's author.:_guard '.\+'" \
+                     {-e,--email=}':Email address of the maintainer.:_guard ".\+"' \
+                     {-u,--homepage=}':Project homepage and/or repository.:_guard ".\+"' \
+                     {-s,--synopsis=}':Short project synopsis.:_guard ".\+"' \
+                     {-c,--category=}':Project category.:_guard ".\+"' \
+                     {-x,--extra-source-file=}':Extra source file to be distributed with tarball.:_files' \
+                    '--lib' \
+                    '--exe' \
+                    '--libandexe' \
+                    '--tests' \
+                    '--test-dir=:Directory containing tests.:_files -]' \
+                    '--simple' \
+                    '--main-is=:Specify the main module.:_files' \
+                    '--language=:Specify the default language.:_guard ".\+"' \
+                    {-o,--expose-module=}':Export a module from the package.:_guard ".\+"' \
+                    '--extension=:Use a LANGUAGE extension (in the other-extensions field).:_guard "\.+"' \
+                    {-d,--dependency=}':Package dependency.:_guard ".\+"' \
+                    '--application-dir=:Directory containing package application executable.:_files' \
+                    '--source-dir=:Directory containing package library source.:_files' \
+                    '--build-tool=:Required external build tool.:_files' \
+                    {-w,--with-compiler=}':give the path to a particular compiler:_files' \
+                    {-v,--verbose=}':level:(0 1 2 3)'
         ;;
         outdated)
-          _arguments {-h,--help} \
+          _arguments '::' \
+                     {-h,--help} \
                      {-v,--verbose=}':level:(0 1 2 3)' \
                      '--freeze-file' \
                      '--project-file:project file:_files' \
