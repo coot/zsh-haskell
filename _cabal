@@ -500,49 +500,6 @@ _cabal () {
             _alternative 'cmps:components:_cabal_components'
           fi
         ;;
-        test)
-          if [[ ${current_word:0:4} == "pkg:" ]]; then
-            _arguments '*:pkgspec:_cabal_tests_pkgspecs'
-          elif [[ ${current_word:0:4} == "lib:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_lib'
-          elif [[ ${current_word:0:5} == "test:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_test'
-          elif [[ ${current_word:0:4} == "exe:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_exe'
-          elif [[ ${current_word:0:6} == "bench:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_bench'
-          else
-            _alternative 'cmps:components:_cabal_tests'
-          fi
-        ;;
-        repl)
-          if [[ ${current_word:0:4} == "pkg:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs'
-          elif [[ ${current_word:0:4} == "lib:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_lib'
-          elif [[ ${current_word:0:5} == "test:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_test'
-          elif [[ ${current_word:0:4} == "exe:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_exe'
-          elif [[ ${current_word:0:6} == "bench:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_bench'
-          else
-            _alternative 'cmps:components:_cabal_components'
-          fi
-        ;;
-        run)
-          if [[ ${current_word:0:4} == "pkg:" ]]; then
-            _arguments '*:pkgspec:_cabal_executable_pkgspecs'
-          elif [[ ${current_word:0:5} == "test:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_test'
-          elif [[ ${current_word:0:4} == "exe:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_exe'
-          elif [[ ${current_word:0:6} == "bench:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_bench'
-          else
-            _alternative 'cmps:components:_cabal_all_executables'
-          fi
-        ;;
         bench)
           if [[ ${current_word:0:4} == "pkg:" ]]; then
             _arguments '*:pkgspec:_cabal_benchmark_pkgspecs'
@@ -551,6 +508,19 @@ _cabal () {
           else
             _alternative 'cmps:components:_cabal_benchmarks'
           fi
+        ;;
+        clean)
+          _arguments '::' \
+                     {-h,--help} \
+                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     '--builddir=:The directory where Cabal puts generated build files:_files -/' \
+                     '--project-file=:Set the name of the cabal.project file to search for in parent directories:_guard ".\+"' \
+                     {-s,--save-config}
+
+        ;;
+        configure)
+          _arguments "1:packages:_cabal_packages" \
+                     ${_cabal_build_options[@]}
         ;;
         exec)
           if [[ ${current_word:0:4} == "pkg:" ]]; then
@@ -567,13 +537,23 @@ _cabal () {
             _alternative 'cmps:components:_cabal_all_executables'
           fi
         ;;
-        update)
-          _alternative 'cmps:components:_cabal_executables' \
-                       'pkg:pkgspec:_cabal_executable_pkgspecs'
-        ;;
-        configure)
-          _arguments "1:packages:_cabal_packages" \
-                     ${_cabal_build_options[@]}
+        fetch)
+          _arguments "::" \
+                     {-h,--help} \
+                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     '--numeric-version' \
+                     '--config-file=:Set an alternate location for the config file:_files' \
+                     '--sandbox-config-file=:Set an alternate location for the sandbox config file:_files' \
+                     '--default-user-config=:Set a location for a cabal.config file for projects without their own cabal.config freeze file.:_files' \
+                     '--require-sandbox' \
+                     '--no-require-sandbox' \
+                     '--ignore-sandbox' \
+                     '--no-ignore-sandbox' \
+                     '--http-transport=:Set a transport for http(s) requests.:(curl wget powershell plain-http)' \
+                     '--enable-nix' \
+                     '--disable-nix' \
+                     "*:package:_cabal_available_packages"
+
         ;;
         freeze)
           _arguments '::' \
@@ -611,47 +591,6 @@ _cabal () {
                      {-v,--verbose=}':level:(0 1 2 3)' \
                      '--package-db=:package DB:_files -/' \
                      "*:package:_cabal_available_packages"
-        ;;
-        install)
-          if [[ ${current_word:0:4} == "pkg:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs'
-          elif [[ ${current_word:0:4} == "lib:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_lib'
-          elif [[ ${current_word:0:5} == "test:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_test'
-          elif [[ ${current_word:0:4} == "exe:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_exe'
-          elif [[ ${current_word:0:6} == "bench:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs_bench'
-          else
-            if [[ -e "cabal.project" ]]
-            then
-              _alternative 'cmps:components:_cabal_components'
-            else
-              _cabal_available_packages
-            fi
-          fi
-        ;;
-        sdist)
-          _arguments '::' \
-                     {-h,--help} \
-                     {-v,--verbose=}':level:(0 1 2 3)' \
-                     '--builddir=:buiddir:_files -/' \
-                     '--project-file=:projectfile:_files' \
-                     {-l,--list-only} \
-                     {-z,--null-sep} \
-                     {-o,--output-dir=}':outputdir:_files -/'
-        ;;
-        upload)
-          _arguments '::' \
-                     {-h,--help} \
-                     {-v,--verbose=}':level:(0 1 2 3)' \
-                     '--publish' \
-                     {-d,--documentation} \
-                     {-u,--username} \
-                     {-p,--password} \
-                     {-P,--password-command} \
-                     '1:tar files:_files'
         ;;
         init)
           # TODO: better _guards
@@ -691,6 +630,26 @@ _cabal () {
                     {-w,--with-compiler=}':give the path to a particular compiler:_files' \
                     {-v,--verbose=}':level:(0 1 2 3)'
         ;;
+        install)
+          if [[ ${current_word:0:4} == "pkg:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs'
+          elif [[ ${current_word:0:4} == "lib:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_lib'
+          elif [[ ${current_word:0:5} == "test:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_test'
+          elif [[ ${current_word:0:4} == "exe:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_exe'
+          elif [[ ${current_word:0:6} == "bench:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+          else
+            if [[ -e "cabal.project" ]]
+            then
+              _alternative 'cmps:components:_cabal_components'
+            else
+              _cabal_available_packages
+            fi
+          fi
+        ;;
         outdated)
           _arguments '::' \
                      {-h,--help} \
@@ -703,6 +662,74 @@ _cabal () {
                      '--ignore' \
                      '--minor'
         ;;
+        repl)
+          if [[ ${current_word:0:4} == "pkg:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs'
+          elif [[ ${current_word:0:4} == "lib:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_lib'
+          elif [[ ${current_word:0:5} == "test:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_test'
+          elif [[ ${current_word:0:4} == "exe:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_exe'
+          elif [[ ${current_word:0:6} == "bench:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+          else
+            _alternative 'cmps:components:_cabal_components'
+          fi
+        ;;
+        run)
+          if [[ ${current_word:0:4} == "pkg:" ]]; then
+            _arguments '*:pkgspec:_cabal_executable_pkgspecs'
+          elif [[ ${current_word:0:5} == "test:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_test'
+          elif [[ ${current_word:0:4} == "exe:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_exe'
+          elif [[ ${current_word:0:6} == "bench:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+          else
+            _alternative 'cmps:components:_cabal_all_executables'
+          fi
+        ;;
+        sdist)
+          _arguments '::' \
+                     {-h,--help} \
+                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     '--builddir=:buiddir:_files -/' \
+                     '--project-file=:projectfile:_files' \
+                     {-l,--list-only} \
+                     {-z,--null-sep} \
+                     {-o,--output-dir=}':outputdir:_files -/'
+        ;;
+        test)
+          if [[ ${current_word:0:4} == "pkg:" ]]; then
+            _arguments '*:pkgspec:_cabal_tests_pkgspecs'
+          elif [[ ${current_word:0:4} == "lib:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_lib'
+          elif [[ ${current_word:0:5} == "test:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_test'
+          elif [[ ${current_word:0:4} == "exe:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_exe'
+          elif [[ ${current_word:0:6} == "bench:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+          else
+            _alternative 'cmps:components:_cabal_tests'
+          fi
+        ;;
+        update)
+          _alternative 'cmps:components:_cabal_executables' \
+                       'pkg:pkgspec:_cabal_executable_pkgspecs'
+        ;;
+        upload)
+          _arguments '::' \
+                     {-h,--help} \
+                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     '--publish' \
+                     {-d,--documentation} \
+                     {-u,--username} \
+                     {-p,--password} \
+                     {-P,--password-command} \
+                     '1:tar files:_files'
+        ;;
         user-config)
           _arguments '*:user-config-command:(init diff update)' \
                      {-h,--help} \
@@ -711,33 +738,6 @@ _cabal () {
                      {-a,--augment=}':setting to augment:_guard ".\+"'
 
                       
-        ;;
-        fetch)
-          _arguments "::" \
-                     {-h,--help} \
-                     {-v,--verbose=}':level:(0 1 2 3)' \
-                     '--numeric-version' \
-                     '--config-file=:Set an alternate location for the config file:_files' \
-                     '--sandbox-config-file=:Set an alternate location for the sandbox config file:_files' \
-                     '--default-user-config=:Set a location for a cabal.config file for projects without their own cabal.config freeze file.:_files' \
-                     '--require-sandbox' \
-                     '--no-require-sandbox' \
-                     '--ignore-sandbox' \
-                     '--no-ignore-sandbox' \
-                     '--http-transport=:Set a transport for http(s) requests.:(curl wget powershell plain-http)' \
-                     '--enable-nix' \
-                     '--disable-nix' \
-                     "*:package:_cabal_available_packages"
-
-        ;;
-        clean)
-          _arguments '::' \
-                     {-h,--help} \
-                     {-v,--verbose=}':level:(0 1 2 3)' \
-                     '--builddir=:The directory where Cabal puts generated build files:_files -/' \
-                     '--project-file=:Set the name of the cabal.project file to search for in parent directories:_guard ".\+"' \
-                     {-s,--save-config}
-
         ;;
       esac
   esac
