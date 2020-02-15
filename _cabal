@@ -703,6 +703,15 @@ _cabal () {
                      '--ignore' \
                      '--minor'
         ;;
+        user-config)
+          _arguments '*:user-config-command:(init diff update)' \
+                     {-h,--help} \
+                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     {-f,--force} \
+                     {-a,--augment=}':setting to augment:_guard ".\+"'
+
+                      
+        ;;
         fetch)
           _arguments "::" \
                      {-h,--help} \
