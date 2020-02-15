@@ -672,6 +672,15 @@ _cabal () {
                      '--enable-nix' \
                      '--disable-nix'
         ;;
+        clean)
+          _arguments '::' \
+                     {-h,--help} \
+                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     '--builddir=:The directory where Cabal puts generated build files:_files -/' \
+                     '--project-file=:Set the name of the cabal.project file to search for in parent directories:_guard ".\+"' \
+                     {-s,--save-config}
+
+        ;;
       esac
   esac
 }
