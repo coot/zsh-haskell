@@ -9,6 +9,7 @@
 # TODO: -f --flag
 # TODO: --package-db
 # TODO: --with-PROG=PATH --PROG-option --PROG-options
+# TODO: cabal {fetch,install} - complete packages
 
 source "$(dirname ${0})/_ghc"
 
@@ -654,6 +655,22 @@ _cabal () {
                      {-q,--quiet} \
                      '--ignore' \
                      '--minor'
+        ;;
+        fetch)
+          _arguments '::' \
+                     {-h,--help} \
+                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     '--numeric-version' \
+                     '--config-file=:Set an alternate location for the config file:_files' \
+                     '--sandbox-config-file=:Set an alternate location for the sandbox config file:_files' \
+                     '--default-user-config=:Set a location for a cabal.config file for projects without their own cabal.config freeze file.:_files' \
+                     '--require-sandbox' \
+                     '--no-require-sandbox' \
+                     '--ignore-sandbox' \
+                     '--no-ignore-sandbox' \
+                     '--http-transport=:Set a transport for http(s) requests.:(curl wget powershell plain-http)' \
+                     '--enable-nix' \
+                     '--disable-nix'
         ;;
       esac
   esac
