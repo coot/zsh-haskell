@@ -17,6 +17,8 @@ source "$(dirname ${0})/_ghc"
 # Directory depth for finding "*.cabal" files.
 CABAL_DEPTH=${CABAL_DEPTH:-4}
 
+CABAL_PACKAGES_TMP_FILE="/tmp/zsh-haskell-cabal-packages"
+
 _cabal_subcommands=( bench build check clean configure "exec" \
                      fetch freeze get "gen-bounds" haddock help \
                      hscolour info init install list outdated repl \
@@ -271,6 +273,23 @@ _cabal_find_ghc () {
     ghcs+=( $(find $p -name "ghc*" | grep -s -P 'ghc(-\d+\.\d+\.\d+)?$' 2>/dev/null) )
   done
   _describe -t ghcs 'ghc' ghcs
+}
+
+_cabal_available_packages_cache () {
+  cabal list --simple-output | awk '{print $1}' | uniq > ${CABAL_PACKAGES_TMP_FILE}
+}
+
+_cabal_available_packages () {
+  # TODO: we don't take into account --package-db
+  local file="/tmp/zsh-haskell-cabal-packages"
+  local -A packages
+  if [[ -e ${CABAL_PACKAGES_TMP_FILE} ]]
+  then
+  else
+    _cabal_available_packages_cache;
+  fi
+  packages=${(f)"$(<${CABAL_PACKAGES_TMP_FILE})"}
+  _arguments "*:package:(${packages})"
 }
 
 _cabal_build_options=( {-h,--help} \
@@ -568,7 +587,8 @@ _cabal () {
                      {-d,--destdir=}':Where to place the package source.:_files -/' \
                      {-s,--source-repository=}':source repository:_guard ".\+"' \
                      '--index-state=:User source package index state:_guard ".\+"' \
-                     '--pristine'
+                     '--pristine' \
+                     "*:package:_cabal_available_packages"
         ;;
         haddock)
           if [[ ${current_word:0:4} == "pkg:" ]]; then
@@ -589,7 +609,8 @@ _cabal () {
           _arguments '::' \
                      {-h,--help} \
                      {-v,--verbose=}':level:(0 1 2 3)' \
-                     '--package-db=:package DB:_files -/'
+                     '--package-db=:package DB:_files -/' \
+                     "*:package:_cabal_available_packages"
         ;;
         install)
           if [[ ${current_word:0:4} == "pkg:" ]]; then
@@ -603,7 +624,12 @@ _cabal () {
           elif [[ ${current_word:0:6} == "bench:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_bench'
           else
-            _alternative 'cmps:components:_cabal_components'
+            if [[ -e "cabal.project" ]]
+            then
+              _alternative 'cmps:components:_cabal_components'
+            else
+              _cabal_available_packages
+            fi
           fi
         ;;
         sdist)
@@ -678,7 +704,7 @@ _cabal () {
                      '--minor'
         ;;
         fetch)
-          _arguments '::' \
+          _arguments "::" \
                      {-h,--help} \
                      {-v,--verbose=}':level:(0 1 2 3)' \
                      '--numeric-version' \
@@ -691,7 +717,9 @@ _cabal () {
                      '--no-ignore-sandbox' \
                      '--http-transport=:Set a transport for http(s) requests.:(curl wget powershell plain-http)' \
                      '--enable-nix' \
-                     '--disable-nix'
+                     '--disable-nix' \
+                     "*:package:_cabal_available_packages"
+
         ;;
         clean)
           _arguments '::' \
@@ -707,5 +735,13 @@ _cabal () {
 }
 
 compdef _cabal cabal
+
+# create cache of installed packages
+# zshcompsys has a cache, it might be better to useit
+if [[ -a ${CABAL_PACKAGES_TMP_FILE} ]];
+then
+else
+  cabal list --simple-output 2>& /dev/null | awk '{print $1}' 2>& /dev/null | uniq > ${CABAL_PACKAGES_TMP_FILE} 2>&/dev/null &
+fi
 
 # vim:ft=zsh:expandtab
