@@ -9,7 +9,8 @@
 # TODO: -f --flag
 # TODO: --package-db
 # TODO: --with-PROG=PATH --PROG-option --PROG-options
-# TODO: cabal {fetch,install,get} - complete packages
+# TODO: cabal {fetch,install,get,info} - complete packages
+# TODO: --package-db=(global user or a file path)
 
 source "$(dirname ${0})/_ghc"
 
@@ -332,7 +333,7 @@ _cabal_build_options=( {-h,--help} \
                        '--configure-option::_guard ".*" ""' \
                        '--user' \
                        '--global' \
-                       '--package-db' \
+                       '--package-db:package DB:_files -]' \
                        {-f,--flags} \
                        '--extra-lib-dirs=:path:_files -/' \
                        '--enable-deterministic' \
@@ -583,6 +584,12 @@ _cabal () {
           else
             _alternative 'cmps:components:_cabal_components'
           fi
+        ;;
+        info)
+          _arguments '::' \
+                     {-h,--help} \
+                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     '--package-db=:package DB:_files -/'
         ;;
         install)
           if [[ ${current_word:0:4} == "pkg:" ]]; then
