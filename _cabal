@@ -555,6 +555,11 @@ _cabal () {
           _arguments "1:packages:_cabal_packages" \
                      ${_cabal_build_options[@]}
         ;;
+        freeze)
+          _arguments '::' \
+                     ${_cabal_build_options[@]}
+
+        ;;
         haddock)
           if [[ ${current_word:0:4} == "pkg:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs'
