@@ -274,27 +274,27 @@ _cabal_find_ghc () {
 
 _cabal_build_options=( {-h,--help} \
                        {-v,--verbose=}':level:(0 1 2 3)' \
-                       '--builddir:buiddir:_files -/' \
+                       '--builddir=:buiddir:_files -/' \
                        {-g,--ghc} \
                        '--ghcjs' \
                        '--uhc' \
                        '--haskell-suite' \
-                       '--cabal-file:cabalfile:_files -g "*.cabal"' \
+                       '--cabal-file=:cabalfile:_files -g "*.cabal"' \
                        '(-w --with-compiler)'{-w,--with-compiler}':compiler:_cabal_find_ghc' \
-                       '--with-hc-pkg:hcpkg:_files' \
-                       '--prefix:dir:_files -/' \
-                       '--binddir:dir:_files -/' \
-                       '--libdir:dir:_files -/' \
-                       '--libsubdir:dir:_files -/' \
-                       '--dynlibdir:dir:_files -/' \
-                       '--libexecdir:dir:_files -/' \
-                       '--libexecsubdir:dir:_files -/' \
-                       '--datadir:dir:_files -/' \
-                       '--datasubdir:dir:_files -/' \
-                       '--docdir:dir:_files -/' \
-                       '--htmldir:dir:_files -/' \
-                       '--haddockdir:dir:_files -/' \
-                       '--sysconfdir:dir:_files -/' \
+                       '--with-hc-pkg=:hcpkg:_files' \
+                       '--prefix=:dir:_files -/' \
+                       '--binddir=:dir:_files -/' \
+                       '--libdir=:dir:_files -/' \
+                       '--libsubdir=:dir:_files -/' \
+                       '--dynlibdir=:dir:_files -/' \
+                       '--libexecdir=:dir:_files -/' \
+                       '--libexecsubdir=:dir:_files -/' \
+                       '--datadir=:dir:_files -/' \
+                       '--datasubdir=:dir:_files -/' \
+                       '--docdir=:dir:_files -/' \
+                       '--htmldir=:dir:_files -/' \
+                       '--haddockdir=:dir:_files -/' \
+                       '--sysconfdir=:dir:_files -/' \
                        '--program-prefix' \
                        '--program-suffix' \
                        '--enable-library-vanilla' \
@@ -334,14 +334,14 @@ _cabal_build_options=( {-h,--help} \
                        '--global' \
                        '--package-db' \
                        {-f,--flags} \
-                       '--extra-lib-dirs:path:_files -/' \
+                       '--extra-lib-dirs=:path:_files -/' \
                        '--enable-deterministic' \
                        '--disable-deterministic' \
                        '--ipid' \
                        '--cid' \
-                       '--extra-lib-dirs:extralib:_files -/' \
-                       '--extra-framework-dirs:path:_files -/' \
-                       '--extra-prog-path:path:_files -/' \
+                       '--extra-lib-dirs=:extralib:_files -/' \
+                       '--extra-framework-dirs=:path:_files -/' \
+                       '--extra-prog-path=:path:_files -/' \
                        '--instantiate-with' \
                        '--enable-tests' \
                        '--disable-tests' \
@@ -382,8 +382,8 @@ _cabal_build_options=( {-h,--help} \
                        '--only-dependencies' \
                        '--dependencies-only \
                        ''--index-state' \
-                       '--root-cmd::_files' \
-                       '--symlink-bindir::_files -/' \
+                       '--root-cmd=::_files' \
+                       '--symlink-bindir=::_files -/' \
                        '--build-summary' \
                        '--build-log' \
                        '--remote-build-reporting' \
@@ -395,7 +395,7 @@ _cabal_build_options=( {-h,--help} \
                        {-j,--jobs}':number of jobs:' \
                        '--keep-going' \
                        '--offline' \
-                       '--project-file::_files' \
+                       '--project-file=::_files' \
                        '--haddock-hoogle' \
                        '--haddock-html' \
                        '--haddock-html-location=URL' \
@@ -405,16 +405,16 @@ _cabal_build_options=( {-h,--help} \
                        '--haddock-benchmarks' \
                        '--haddock-all' \
                        '--haddock-internal' \
-                       '--haddock-css::_files' \
+                       '--haddock-css=::_files' \
                        '--haddock-hyperlink-source' \
                        '--haddock-quickjump' \
-                       '--haddock-hscolour-css::_files' \
+                       '--haddock-hscolour-css=::_files' \
                        '--haddock-contents-location' \
                        '--test-log' \
                        '--test-machine-log' \
                        '--test-show-details' \
                        '--test-keep-tix-files' \
-                       '--test-wrapper::_files' \
+                       '--test-wrapper=::_files' \
                        '--test-fail-when-no-test-suites' \
                        '--test-options' \
                        '--test-option' \
@@ -445,9 +445,9 @@ _cabal () {
       _arguments ':subcommand:_cabal_subcommand' \
                   {-v,--version} \
                   '--numeric-version' \
-                  '--config-file:cabal config file:_files' \
-                  '--sandbox-config-file:sandbox config file:_files' \
-                  '--defalt-user-config:user cabal config file:_files' \
+                  '--config-file=:cabal config file:_files' \
+                  '--sandbox-config-file=:sandbox config file:_files' \
+                  '--defalt-user-config=:user cabal config file:_files' \
                   '--require-sandbox' \
                   '--no-require-sandbox' \
                   '--ignore-sandbox' \
@@ -456,11 +456,11 @@ _cabal () {
                   '--enable-nix' \
                   '--disable-nix' \
                   '--remote-repo::_guard ".*" ""' \
-                  '--remote-repo-cache:cache directory for remote repos:_files -/' \
-                  '--local-repo::_files -/' \
-                  {--logs-dir,--logsdir}':log directory:_files -/' \
-                  '--world-file::_files' \
-                  {--store-dir,--storedir}':store directory:_files -/'
+                  '--remote-repo-cache=:cache directory for remote repos:_files -/' \
+                  '--local-repo=::_files -/' \
+                  {--logs-dir,--logsdir=}':log directory:_files -/' \
+                  '--world-file=::_files' \
+                  {--store-dir=,--storedir=}':store directory:_files -/'
     ;;
     subcommand_args)
       # handle subcommand arguments and options
@@ -593,7 +593,7 @@ _cabal () {
                      '--project-file=:projectfile:_files' \
                      {-l,--list-only} \
                      {-z,--null-sep} \
-                     {-o,--output-dir}':outputdir:_files -/'
+                     {-o,--output-dir=}':outputdir:_files -/'
         ;;
         upload)
           _arguments '::' \
@@ -649,7 +649,7 @@ _cabal () {
                      {-h,--help} \
                      {-v,--verbose=}':level:(0 1 2 3)' \
                      '--freeze-file' \
-                     '--project-file:project file:_files' \
+                     '--project-file=:project file:_files' \
                      '--simple-output' \
                      '--exit-code' \
                      {-q,--quiet} \
