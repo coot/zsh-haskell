@@ -9,7 +9,7 @@
 # TODO: -f --flag
 # TODO: --package-db
 # TODO: --with-PROG=PATH --PROG-option --PROG-options
-# TODO: cabal {fetch,install} - complete packages
+# TODO: cabal {fetch,install,get} - complete packages
 
 source "$(dirname ${0})/_ghc"
 
@@ -559,6 +559,15 @@ _cabal () {
           _arguments '::' \
                      ${_cabal_build_options[@]}
 
+        ;;
+        get)
+          _arguments '::' \
+                     {-h,--help} \
+                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     {-d,--destdir=}':Where to place the package source.:_files -/' \
+                     {-s,--source-repository=}':source repository:_guard ".\+"' \
+                     '--index-state=:User source package index state:_guard ".\+"' \
+                     '--pristine'
         ;;
         haddock)
           if [[ ${current_word:0:4} == "pkg:" ]]; then
