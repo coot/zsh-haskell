@@ -614,6 +614,18 @@ _cabal () {
             _alternative 'cmps:components:_cabal_components'
           fi
         ;;
+        hscolour)
+          _arguments '::' \
+                     {-h,--help} \
+                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     '--builddir=:buiddir:_files -/' \
+                     '--executables' \
+                     '--tests' \
+                     '--benchmarks' \
+                     '--foreign-libraries' \
+                     '--all' \
+                     '--css:path:_files -/'
+        ;;
         info)
           _arguments '::' \
                      {-h,--help} \
