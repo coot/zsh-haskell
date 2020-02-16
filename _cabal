@@ -14,7 +14,17 @@
 
 source "$(dirname ${0})/_ghc"
 
-CABAL_PACKAGES_TMP_FILE="/tmp/zsh-haskell-cabal-packages"
+_cabal_default_options () {
+  zstyle -s ":completion::complete:cabal::options:" packages-tmp-file PACKAGES_TMP_FILE
+  if [[ -z ${PACKAGES_TMP_FILE} ]]; then
+    zstyle ":completion::complete:cabal::options:" packages-tmp-file "/tmp/zsh-haskell-cabal-packages"
+  fi
+
+  zstyle -s ":completion:${curcontext}:options:" depth depth
+  if [[ -z "${depth}" ]]; then
+    zstyle ":completion:${curcontext}:options:" depth 4
+  fi
+}
 
 _cabal_subcommands=( bench build check clean configure "exec" \
                      fetch freeze get "gen-bounds" haddock help \
@@ -275,19 +285,24 @@ _cabal_find_ghc () {
 }
 
 _cabal_available_packages_cache () {
-  cabal list --simple-output | awk '{print $1}' | uniq > ${CABAL_PACKAGES_TMP_FILE}
+  local packages_tmp_file;
+  zstyle -s ":completion::complete:cabal::options:" packages-tmp-file packages_tmp_file;
+  echo " /creating list of avaialble packages: it might take a while .../"
+  cabal list --simple-output | awk '{print $1}' | uniq > ${packages_tmp_file}
 }
 
 _cabal_available_packages () {
   # TODO: we don't take into account --package-db
   local file="/tmp/zsh-haskell-cabal-packages"
   local -A packages
-  if [[ -e ${CABAL_PACKAGES_TMP_FILE} ]]
+  local packages_tmp_file
+  zstyle -s ":completion::complete:cabal::options:" packages-tmp-file packages_tmp_file
+  if [[ -e ${packages_tmp_file} ]]
   then
   else
     _cabal_available_packages_cache;
   fi
-  packages=${(f)"$(<${CABAL_PACKAGES_TMP_FILE})"}
+  packages=${(f)"$(<${packages_tmp_file})"}
   _arguments "*:package:(${packages})"
 }
 
@@ -452,10 +467,7 @@ _cabal () {
   local subcommand=""
   typeset -A opt_args
 
-  zstyle -s ":completion:${curcontext}:options:" depth depth
-  if [[ -z "${depth}" ]]; then
-    zstyle ":completion:${curcontext}:options:" depth 4
-  fi
+  _cabal_default_options
 
   current_word=$words[$CURRENT]
   for word in $words; do
@@ -750,13 +762,3 @@ _cabal () {
 }
 
 compdef _cabal cabal
-
-# create cache of installed packages
-# zshcompsys has a cache, it might be better to useit
-if [[ -a ${CABAL_PACKAGES_TMP_FILE} ]];
-then
-else
-  cabal list --simple-output 2>& /dev/null | awk '{print $1}' 2>& /dev/null | uniq > ${CABAL_PACKAGES_TMP_FILE} 2>&/dev/null &
-fi
-
-# vim:ft=zsh:expandtab

@@ -28,4 +28,11 @@ zstyle ":completion::complete:cabal::options:" depth 4
 ```
 Maximan directory depth for searching for `*.cabal` files.
 
+```
+zstyle ":completion::complete:cabal::options:" 
+zstyle ":completion::complete:cabal::options:" packages-tmp-file "/tmp/zsh-haskell-cabal-packages"
+```
+File which stores list of package names.  It will be created on demenad (e.g.
+by completiting `cabal info` or `cabal install`, etc.).
+
 ![](https://raw.githubusercontent.com/coot/zsh-cabal/master/docs/screencast.gif)
