@@ -528,6 +528,11 @@ _cabal () {
             _alternative 'cmps:components:_cabal_benchmarks'
           fi
         ;;
+        check)
+          _arguments '::' \
+                     {-h,--help} \
+                     {-v,--verbose=}':level:(0 1 2 3)'
+        ;;
         clean)
           _arguments '::' \
                      {-h,--help} \
