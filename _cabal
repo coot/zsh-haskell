@@ -14,9 +14,6 @@
 
 source "$(dirname ${0})/_ghc"
 
-# Directory depth for finding "*.cabal" files.
-CABAL_DEPTH=${CABAL_DEPTH:-4}
-
 CABAL_PACKAGES_TMP_FILE="/tmp/zsh-haskell-cabal-packages"
 
 _cabal_subcommands=( bench build check clean configure "exec" \
@@ -63,7 +60,9 @@ _cabal_commands () {
 _cabal_list_files () {
   # find all cabal files, but do not descent into dist-newstyle, dist or
   # .stack-work directories
-  find -maxdepth ${CABAL_DEPTH} \
+  local depth
+  zstyle -s ":completion:${curcontext}:options:" depth depth
+  find -maxdepth ${depth} \
                  -name "dist-newstyle" -prune , \
                  -name "dist" -prune , \
                  -name ".stack-work" -prune , \
@@ -449,16 +448,23 @@ _cabal_subcommand () {
 }
 
 _cabal () {
-  local context state state_descr line word current_word
+  local context state state_descr line word current_word depth
   local subcommand=""
-  current_word=$words[$CURRENT]
   typeset -A opt_args
+
+  zstyle -s ":completion:${curcontext}:options:" depth depth
+  if [[ -z "${depth}" ]]; then
+    zstyle ":completion:${curcontext}:options:" depth 4
+  fi
+
+  current_word=$words[$CURRENT]
   for word in $words; do
     if [[ -n ${word:*_cabal_subcommands} ]];then
       subcommand=$word
       break
     fi
   done
+  echo ${curcontext} >> /tmp/log
   case ${subcommand:+subcommand_}"args" in
     args)
       # handle subcommands and global options"
