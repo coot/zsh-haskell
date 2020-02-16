@@ -710,6 +710,14 @@ _cabal () {
             _alternative 'cmps:components:_cabal_components'
           fi
         ;;
+        report)
+          _arguments '::' \
+                     {-h,--help} \
+                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     {-u,--username=}':username:_guard ".\+"' \
+                     {-p,--password=}':password:_guard ".\+"'
+
+        ;;
         run)
           if [[ ${current_word:0:4} == "pkg:" ]]; then
             _arguments '*:pkgspec:_cabal_executable_pkgspecs'
