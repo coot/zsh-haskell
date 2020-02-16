@@ -668,6 +668,15 @@ _cabal () {
             fi
           fi
         ;;
+        list)
+          _arguments '::' \
+                     {-h,--help} \
+                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     '--installed' \
+                     '--simple-output' \
+                     '--package-db=:package DB:_files -/' \
+                     '*:package:_cabal_available_packages'
+        ;;
         outdated)
           _arguments '::' \
                      {-h,--help} \
