@@ -578,6 +578,11 @@ _cabal () {
                      ${_cabal_build_options[@]}
 
         ;;
+        gen-bounds)
+          _arguments '::' \
+                     {-h,--help} \
+                     {-v,--verbose=}':level:(0 1 2 3)'
+        ;;
         get)
           _arguments '::' \
                      {-h,--help} \
