@@ -481,6 +481,7 @@ _cabal () {
     args)
       # handle subcommands and global options"
       _arguments ':subcommand:_cabal_subcommand' \
+                  {-h,--help} \
                   {-v,--version} \
                   '--numeric-version' \
                   '--config-file=:cabal config file:_files' \
