@@ -14,15 +14,17 @@
 
 source "$(dirname ${0})/_ghc"
 
+MAIN_CONTEXT=":complete:cabal:"
+
 _cabal_default_options () {
-  zstyle -s ":completion::complete:cabal::options:" packages-tmp-file PACKAGES_TMP_FILE
+  zstyle -s ":completion:${MAIN_CONTEXT}:options:" packages-tmp-file PACKAGES_TMP_FILE
   if [[ -z ${PACKAGES_TMP_FILE} ]]; then
-    zstyle ":completion::complete:cabal::options:" packages-tmp-file "/tmp/zsh-haskell-cabal-packages"
+    zstyle ":completion:${MAIN_CONTEXT}:options:" packages-tmp-file "/tmp/zsh-haskell-cabal-packages"
   fi
 
-  zstyle -s ":completion:${curcontext}:options:" depth depth
+  zstyle -s ":completion:${MAIN_CONTEXT}:options:" depth depth
   if [[ -z "${depth}" ]]; then
-    zstyle ":completion:${curcontext}:options:" depth 4
+    zstyle ":completion:${MAIN_CONTEXT}:options:" depth 4
   fi
 }
 
@@ -71,7 +73,7 @@ _cabal_list_files () {
   # find all cabal files, but do not descent into dist-newstyle, dist or
   # .stack-work directories
   local depth
-  zstyle -s ":completion:${curcontext}:options:" depth depth
+  zstyle -s ":completion:${MAIN_CONTEXT}:options:" depth depth
   find -maxdepth ${depth} \
                  -name "dist-newstyle" -prune , \
                  -name "dist" -prune , \
@@ -476,7 +478,6 @@ _cabal () {
       break
     fi
   done
-  echo ${curcontext} >> /tmp/log
   case ${subcommand:+subcommand_}"args" in
     args)
       # handle subcommands and global options"
