@@ -309,7 +309,7 @@ _cabal_available_packages () {
 }
 
 _cabal_build_options=( {-h,--help} \
-                       {-v,--verbose=}':level:(0 1 2 3)' \
+                       {-v=,--verbose=}':level:(0 1 2 3)' \
                        '--builddir=:buiddir:_files -/' \
                        {-g,--ghc} \
                        '--ghcjs' \
@@ -532,12 +532,12 @@ _cabal () {
         check)
           _arguments '::' \
                      {-h,--help} \
-                     {-v,--verbose=}':level:(0 1 2 3)'
+                     {-v=,--verbose=}':level:(0 1 2 3)'
         ;;
         clean)
           _arguments '::' \
                      {-h,--help} \
-                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     {-v=,--verbose=}':level:(0 1 2 3)' \
                      '--builddir=:The directory where Cabal puts generated build files:_files -/' \
                      '--project-file=:Set the name of the cabal.project file to search for in parent directories:_guard ".\+"' \
                      {-s,--save-config}
@@ -565,7 +565,7 @@ _cabal () {
         fetch)
           _arguments "::" \
                      {-h,--help} \
-                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     {-v=,--verbose=}':level:(0 1 2 3)' \
                      '--numeric-version' \
                      '--config-file=:Set an alternate location for the config file:_files' \
                      '--sandbox-config-file=:Set an alternate location for the sandbox config file:_files' \
@@ -588,12 +588,12 @@ _cabal () {
         gen-bounds)
           _arguments '::' \
                      {-h,--help} \
-                     {-v,--verbose=}':level:(0 1 2 3)'
+                     {-v=,--verbose=}':level:(0 1 2 3)'
         ;;
         get)
           _arguments '::' \
                      {-h,--help} \
-                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     {-v=,--verbose=}':level:(0 1 2 3)' \
                      {-d,--destdir=}':Where to place the package source.:_files -/' \
                      {-s,--source-repository=}':source repository:_guard ".\+"' \
                      '--index-state=:User source package index state:_guard ".\+"' \
@@ -618,7 +618,7 @@ _cabal () {
         hscolour)
           _arguments '::' \
                      {-h,--help} \
-                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     {-v=,--verbose=}':level:(0 1 2 3)' \
                      '--builddir=:buiddir:_files -/' \
                      '--executables' \
                      '--tests' \
@@ -630,7 +630,7 @@ _cabal () {
         info)
           _arguments '::' \
                      {-h,--help} \
-                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     {-v=,--verbose=}':level:(0 1 2 3)' \
                      '--package-db=:package DB:_files -/' \
                      "*:package:_cabal_available_packages"
         ;;
@@ -670,7 +670,7 @@ _cabal () {
                     '--source-dir=:Directory containing package library source.:_files' \
                     '--build-tool=:Required external build tool.:_files' \
                     {-w,--with-compiler=}':give the path to a particular compiler:_files' \
-                    {-v,--verbose=}':level:(0 1 2 3)'
+                    {-v=,--verbose=}':level:(0 1 2 3)'
         ;;
         install)
           if [[ ${current_word:0:4} == "pkg:" ]]; then
@@ -695,7 +695,7 @@ _cabal () {
         list)
           _arguments '::' \
                      {-h,--help} \
-                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     {-v=,--verbose=}':level:(0 1 2 3)' \
                      '--installed' \
                      '--simple-output' \
                      '--package-db=:package DB:_files -/' \
@@ -704,7 +704,7 @@ _cabal () {
         outdated)
           _arguments '::' \
                      {-h,--help} \
-                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     {-v=,--verbose=}':level:(0 1 2 3)' \
                      '--freeze-file' \
                      '--project-file=:project file:_files' \
                      '--simple-output' \
@@ -731,7 +731,7 @@ _cabal () {
         report)
           _arguments '::' \
                      {-h,--help} \
-                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     {-v=,--verbose=}':level:(0 1 2 3)' \
                      {-u,--username=}':username:_guard ".\+"' \
                      {-p,--password=}':password:_guard ".\+"'
 
@@ -752,7 +752,7 @@ _cabal () {
         sdist)
           _arguments '::' \
                      {-h,--help} \
-                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     {-v=,--verbose=}':level:(0 1 2 3)' \
                      '--builddir=:buiddir:_files -/' \
                      '--project-file=:projectfile:_files' \
                      {-l,--list-only} \
@@ -781,7 +781,7 @@ _cabal () {
         upload)
           _arguments '::' \
                      {-h,--help} \
-                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     {-v=,--verbose=}':level:(0 1 2 3)' \
                      '--publish' \
                      {-d,--documentation} \
                      {-u,--username} \
@@ -792,7 +792,7 @@ _cabal () {
         user-config)
           _arguments '*:user-config-command:(init diff update)' \
                      {-h,--help} \
-                     {-v,--verbose=}':level:(0 1 2 3)' \
+                     {-v=,--verbose=}':level:(0 1 2 3)' \
                      {-f,--force} \
                      {-a,--augment=}':setting to augment:_guard ".\+"'
 
