@@ -24,6 +24,7 @@ _ghc () {
 	    grep -v -P '^(-pgm([acFiLlPs]|dll|lc|libtool|lowindres))$' | \
 	    grep -v -P '^(--exclude-module|-dep-makefile|-dumpdir|-hidir|-odir|-ohi)$' | \
 	    grep -v -P '^(-package-db|-package|-package-id|-main-is)$' | \
+	    grep -v -P '^(--show-iface)$' | \
 	    ([[ ${current_word:0:4} != '-XNo' ]] && grep -v '^-XNo' || tee) | \
 	    ([[ ${current_word:0:4} != '-fno' ]] && grep -v '^-fno' || tee) | \
 	    ([[ ${current_word:0:4} != '-Wno' ]] && grep -v '^-Wno' || tee) ) );
@@ -52,7 +53,8 @@ _ghc () {
 	     '-stubdir:directory:_files -/' \
 	     '-package-db:package-db:_files' \
 	     '-package-id:package-id:_ghc_package_ids' \
-	     '-main-is:main file:_files'
+	     '-main-is:main file:_files' \
+             '--show-iface:file:_files'
 }
 
 compdef _ghc ghc
