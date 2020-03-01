@@ -779,15 +779,14 @@ _cabal () {
                        'pkg:pkgspec:_cabal_executable_pkgspecs'
         ;;
         upload)
-          _arguments '::' \
+          _arguments '*:tar files:_files' \
                      {-h,--help} \
                      {-v=,--verbose=}':level:(0 1 2 3)' \
                      '--publish' \
                      {-d,--documentation} \
                      {-u,--username} \
                      {-p,--password} \
-                     {-P,--password-command} \
-                     '1:tar files:_files'
+                     {-P,--password-command}
         ;;
         user-config)
           _arguments '*:user-config-command:(init diff update)' \
