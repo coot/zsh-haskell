@@ -65,6 +65,11 @@ _ghc-pkg () {
           _arguments ':filename:_files'
           break
           ;;
+        ("unregister")
+          # TODO: complete installed packages
+          _arguments ':package:_guard ".*" ""'
+          break
+          ;;
         ("update")
           _arguments ':filename:_files'
           break
