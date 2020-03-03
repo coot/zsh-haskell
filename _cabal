@@ -368,7 +368,7 @@ _cabal_build_options=( {-h,--help} \
                        '--configure-option::_guard ".*" ""' \
                        '--user' \
                        '--global' \
-                       '--package-db:package DB:_files -]' \
+                       '--package-db=:package DB:_files -]' \
                        {-f,--flags} \
                        '--extra-lib-dirs=:path:_files -/' \
                        '--enable-deterministic' \
