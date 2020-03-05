@@ -16,7 +16,7 @@ _ghc-pkg_commands () {
     "distrust:Distrust the specified package."
     "list:List registered packages in the global database, and also the user database if --user is given."
     "dot:Generate a graph of the package dependencies in a form suitable for input for the graphviz tools."
-    "find:List registered packages exposing module {module} in the global database, and also the user database if --user is given."
+    "find-module:List registered packages exposing module {module} in the global database, and also the user database if --user is given."
     "latest:Prints the highest registered version of a package."
     "check:Check the consistency of package dependencies and list broken packages."
     "describe:Give the registered description for the specified package."
