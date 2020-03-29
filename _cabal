@@ -397,12 +397,12 @@ _cabal_build_options=( {-h,--help} \
                        '--solver' \
                        '--allow-older' \
                        '--allow-newer' \
-                       '--write-ghc-environment-files::(always never ghc8.4.4+)' \
+                       '--write-ghc-environment-files=: :(always never ghc8.4.4+)' \
                        '--enable-documentation' \
                        '--disable-documentation' \
-                       '--doc-index-file=TEMPLATE' \
+                       '--doc-index-file=: :_files' \
                        '--dry-run' \
-                       '--max-backjumps:max backjumps:_guard "\d\+" "max backjumps"' \
+                       '--max-backjumps=:max backjumps:_guard "\d\+" "max backjumps"' \
                        '--reorder-goals' \
                        '--count-conflicts' \
                        '--minimize-conflict-set' \
@@ -410,7 +410,7 @@ _cabal_build_options=( {-h,--help} \
                        '--shadow-installed-packages' \
                        '--strong-flags' \
                        '--allow-boot-library-installs' \
-                       '--reject-unconstrained-dependencies::(none all)' \
+                       '--reject-unconstrained-dependencies: :(none all)' \
                        '--reinstall' \
                        '--avoid-reinstalls' \
                        '--force-reinstalls' \
@@ -418,8 +418,8 @@ _cabal_build_options=( {-h,--help} \
                        '--only-dependencies' \
                        '--dependencies-only \
                        ''--index-state' \
-                       '--root-cmd=::_files' \
-                       '--symlink-bindir=::_files -/' \
+                       '--root-cmd=: :_files' \
+                       '--symlink-bindir=: :_files -/' \
                        '--build-summary' \
                        '--build-log' \
                        '--remote-build-reporting' \
@@ -431,7 +431,7 @@ _cabal_build_options=( {-h,--help} \
                        {-j,--jobs}':number of jobs:' \
                        '--keep-going' \
                        '--offline' \
-                       '--project-file=::_files' \
+                       '--project-file=: :_files' \
                        '--haddock-hoogle' \
                        '--haddock-html' \
                        '--haddock-html-location=URL' \
@@ -441,16 +441,16 @@ _cabal_build_options=( {-h,--help} \
                        '--haddock-benchmarks' \
                        '--haddock-all' \
                        '--haddock-internal' \
-                       '--haddock-css=::_files' \
+                       '--haddock-css=: :_files' \
                        '--haddock-hyperlink-source' \
                        '--haddock-quickjump' \
-                       '--haddock-hscolour-css=::_files' \
+                       '--haddock-hscolour-css=: :_files' \
                        '--haddock-contents-location' \
                        '--test-log' \
                        '--test-machine-log' \
                        '--test-show-details' \
                        '--test-keep-tix-files' \
-                       '--test-wrapper=::_files' \
+                       '--test-wrapper=: :_files' \
                        '--test-fail-when-no-test-suites' \
                        '--test-options' \
                        '--test-option' \
@@ -492,14 +492,14 @@ _cabal () {
                   '--no-require-sandbox' \
                   '--ignore-sandbox' \
                   '--ignore-expiry' \
-                  '--http-transport::_guard ".*" ""' \
+                  '--http-transport: :_guard ".*" ""' \
                   '--enable-nix' \
                   '--disable-nix' \
-                  '--remote-repo::_guard ".*" ""' \
+                  '--remote-repo: :_guard ".*" ""' \
                   '--remote-repo-cache=:cache directory for remote repos:_files -/' \
-                  '--local-repo=::_files -/' \
+                  '--local-repo=: :_files -/' \
                   {--logs-dir,--logsdir=}':log directory:_files -/' \
-                  '--world-file=::_files' \
+                  '--world-file=: :_files' \
                   {--store-dir=,--storedir=}':store directory:_files -/'
     ;;
     subcommand_args)
