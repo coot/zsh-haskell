@@ -74,6 +74,8 @@ _cabal_list_files () {
   # .stack-work directories
   local depth
   zstyle -s ":completion:${MAIN_CONTEXT}:options:" depth depth
+  # options might not be set if using outside of completion
+  [[ -z ${depth} ]] && depth=4
   find -maxdepth ${depth} \
                  -name "dist-newstyle" -prune , \
                  -name "dist" -prune , \
