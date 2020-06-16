@@ -1,17 +1,17 @@
 #compdef ghc
 #
 # Author: Marcin Szamotulski
-# Copyright: 2019
+# Copyright: 2019,2020
 
 _ghc_packages () {
   local -a pkgs
-  pkgs=( $(ghc-pkg list --names-only --simple-output) )
+  pkgs=( $(ghc --show-packages 2&>/dev/null | grep "^name:" | awk '{print $2}' | uniq) )
   _describe -t pkgs "packages" pkgs
 }
 
 _ghc_package_ids () {
   local -a pkgs
-  pkgs=( $(ghc-pkg list --simple-output) )
+  pkgs=( $(ghc --show-packages 2&>/dev/null | grep "^id:" | awk '{print $2}' | uniq) )
   _describe -t pkgs "package-ids" pkgs
 }
 
