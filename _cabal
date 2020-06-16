@@ -290,7 +290,7 @@ _cabal_find_ghc () {
 
 _cabal_available_packages_cache () {
   local packages_tmp_file;
-  zstyle -s ":completion::complete:cabal::options:" packages-tmp-file packages_tmp_file;
+  zstyle -s ":completion:${MAIN_CONTEXT}:options:" packages-tmp-file packages_tmp_file;
   echo " /creating list of avaialble packages: it might take a while .../"
   cabal list --simple-output | awk '{print $1}' | uniq > ${packages_tmp_file}
 }
@@ -300,7 +300,7 @@ _cabal_available_packages () {
   local file="/tmp/zsh-haskell-cabal-packages"
   local -A packages
   local packages_tmp_file
-  zstyle -s ":completion::complete:cabal::options:" packages-tmp-file packages_tmp_file
+  zstyle -s ":completion:${MAIN_CONTEXT}:options:" packages-tmp-file packages_tmp_file
   if [[ -e ${packages_tmp_file} ]]
   then
   else
