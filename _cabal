@@ -113,6 +113,12 @@ _cabal_list_libraries () {
   done;
 }
 
+_cabal_libraries_in_file () {
+  local file=$1
+  grep -s -P '^library\s+\S' $file | awk '{print $2}' | sed -e 's/:/\\:/g' 2>/dev/null
+  [[ $(grep -s -i "^library\s*$" ${file}) ]] \
+    && echo $(basename ${file} .cabal)" " 2>/dev/null | sed -e 's/:/\\:/g';
+}
 
 _cabal_list_all_executables () {
   # find all executable components
@@ -131,6 +137,11 @@ _cabal_list_executables () {
   done;
 }
 
+_cabal_executables_in_file () {
+  local file=$1
+  grep -s -i '^executable\s\+' $file 2>/dev/null | awk '{print $2}' | sed -e 's/:/\\:/g'
+}
+
 _cabal_list_tests () {
   # find all components
   local file cmps
@@ -139,12 +150,22 @@ _cabal_list_tests () {
   done;
 }
 
+_cabal_tests_in_file () {
+  local file=$1
+  grep -s -P '^test-suite\s+\S' $file 2>/dev/null | awk '{print $2}' | sed -e 's/:/\\:/g'
+}
+
 _cabal_list_benchmarks () {
   # find all benchmarks
   local file
   for file in $(_cabal_list_files); do
     grep -s -i '^benchmark\s\+' $file 2>/dev/null | awk '{print $2}' | sed -e 's/:/\\:/g'
   done;
+}
+
+_cabal_benchmarks_in_file () {
+  local file=$1
+  grep -s -i '^benchmark\s\+' $file 2>/dev/null | awk '{print $2}' | sed -e 's/:/\\:/g'
 }
 
 _cabal_components () {
@@ -198,10 +219,30 @@ _cabal_pkgspecs () {
   local file name
   for file in $(_cabal_list_files); do
     name=$(basename ${file} .cabal)
-    [[ $(grep -s -i -P '^library'    ${file} 2>/dev/null) ]] && pkgs+=("pkg:${name}:libs")
-    [[ $(grep -s -i -P '^test-suite' ${file} 2>/dev/null) ]] && pkgs+=("pkg:${name}:tests")
-    [[ $(grep -s -i -P '^benchmark'  ${file} 2>/dev/null) ]] && pkgs+=("pkg:${name}:benches")
-    [[ $(grep -s -i -P '^executable' ${file} 2>/dev/null) ]] && pkgs+=("pkg:${name}:exes")
+    if [[ $(grep -s -i -P '^library'    ${file} 2>/dev/null) ]]; then
+      pkgs+=("pkg:${name}:libs")
+      for component in $(_cabal_libraries_in_file $file); do
+        pkgs+=("pkg:${name}:lib:${component}");
+      done
+    fi
+    if [[ $(grep -s -i -P '^test-suite' ${file} 2>/dev/null) ]]; then
+      pkgs+=("pkg:${name}:tests")
+      for component in $(_cabal_tests_in_file $file); do
+        pkgs+=("pkg:${name}:test:${component}");
+      done
+    fi
+    if [[ $(grep -s -i -P '^benchmark'  ${file} 2>/dev/null) ]]; then
+      pkgs+=("pkg:${name}:benches")
+      for component in $(_cabal_benchmarks_in_file $file); do
+        pkgs+=("pkg:${name}:bench:${component}");
+      done
+    fi
+    if [[ $(grep -s -i -P '^executable' ${file} 2>/dev/null) ]]; then
+      pkgs+=("pkg:${name}:exes")
+      for component in $(_cabal_executables_in_file $file); do
+        pkgs+=("pkg:${name}:exe:${component}");
+      done
+    fi
   done 
   # not using -i, this way pkg:${name} will be alway at hand
   _multi_parts ":" pkgs
