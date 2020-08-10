@@ -1,4 +1,4 @@
-# haskell plugin for zsh shell
+# ZSH shell plugin for Haskell
 
 * completion for **ghc** options
 * completion for **cabal** commands; it can expands cabal components (libraries,
@@ -7,24 +7,29 @@
   install`)
 * completion for **ghc-pkgs** commands & options
 
-# usage
+# Usage
 
 The completion script will find and inspect all cabal files under current
 directory which are not deeper than four directories away.  It does not descent
 under `dist-newstye`, `dist`, `.stack-work` or `.git` directories.
 
 Completion for the following package specs is supported:
+
 * `component-name` - it can be either a component name or a package name
-* `lib:library-component`,
-* `exec:exec-component`,
-* `bench:benchmark-component`,
-* `test:test-component`
-* `pkg:pkg-name:{libs,tests,exes,benches}`.
-The last five are only triggered when `lib:`, `exec:`, `bench:`, `test:` or
-`pkg:` are given **explicitly**.  This is in order to avoid providing too many
+* `package-name:{lib,test,exe,bench}:component-name`
+* `package-name:{libs,tests,exes,benches}`
+* `pkg:package-name:{lib,test,exe,bench}:component-name`.
+* `pkg:package-name:{libs,tests,exes,benches}`.
+* `lib:component-name`,
+* `exec:component-name`,
+* `bench:component-name`,
+* `test:component-name`
+
+The last six are only triggered when `pkg:`, `lib:`, `exec:`, `bench:` or
+`test:` are given **explicitly**.  This is in order to avoid providing too many
 completion results.
 
-# configuration
+# Configuration
 
 ```
 zstyle ":completion::complete:cabal::options:" depth 4
@@ -38,5 +43,5 @@ zstyle ":completion::complete:cabal::options:" packages-tmp-file "/tmp/zsh-haske
 File which stores list of package names.  It will be created on demenad (e.g.
 by completiting `cabal info` or `cabal install`, etc.).
 
-# demo
+# Demo
 ![](https://raw.githubusercontent.com/coot/zsh-cabal/master/docs/screencast.gif)
