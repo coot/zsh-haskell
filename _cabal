@@ -168,12 +168,53 @@ _cabal_benchmarks_in_file () {
   grep -s -i '^benchmark\s\+' $file 2>/dev/null | awk '{print $2}' | sed -e 's/:/\\:/g'
 }
 
-_cabal_components () {
+# completion for components
+# ```
+# _cabal_components_with_prefix "pkg:"
+# ```
+# or
+# ```
+# _cabal_components_with_prefix
+# ```
+_cabal_components_with_prefix () {
+  local prefix=$1
   local -a components
-  components=( $(_cabal_list_components) )
-  _arguments "*:components:(${components})" \
-             ${_cabal_build_options[@]}
-              
+  local -a pkgs
+  local file name
+  for file in $(_cabal_list_files); do
+    name=$(basename ${file} .cabal)
+    if [[ $(grep -s -i -P '^library'    ${file} 2>/dev/null) ]]; then
+      pkgs+=("${prefix}${name}:libs")
+      for component in $(_cabal_libraries_in_file $file); do
+        pkgs+=("${prefix}${name}:lib:${component}");
+      done
+    fi
+    if [[ $(grep -s -i -P '^test-suite' ${file} 2>/dev/null) ]]; then
+      pkgs+=("${prefix}${name}:tests")
+      for component in $(_cabal_tests_in_file $file); do
+        pkgs+=("${prefix}${name}:test:${component}");
+      done
+    fi
+    if [[ $(grep -s -i -P '^benchmark'  ${file} 2>/dev/null) ]]; then
+      pkgs+=("${prefix}${name}:benches")
+      for component in $(_cabal_benchmarks_in_file $file); do
+        pkgs+=("${prefix}${name}:bench:${component}");
+      done
+    fi
+    if [[ $(grep -s -i -P '^executable' ${file} 2>/dev/null) ]]; then
+      pkgs+=("${prefix}${name}:exes")
+      for component in $(_cabal_executables_in_file $file); do
+        pkgs+=("${prefix}${name}:exe:${component}");
+      done
+    fi
+  done 
+  _multi_parts ":" pkgs
+}
+
+# completion for `package-name:(libs|tests|benches|exes)` and
+# `package-name:(lib:test:bench:exe):component-name`
+_cabal_components () {
+  _cabal_components_with_prefix;
 }
 
 # test-suites, benchmarks and executables
@@ -213,39 +254,10 @@ _cabal_packages () {
   _describe -t pkgs 'packages' pkgs
 }
 
-# completion for `pkg:package-name:(libs|tests|benches|exes)`
+# completion for `pkg:package-name:(libs|tests|benches|exes)` and
+# `pkg:package-name:(lib:test:bench:exe):component-name`
 _cabal_pkgspecs () {
-  local -a pkgs
-  local file name
-  for file in $(_cabal_list_files); do
-    name=$(basename ${file} .cabal)
-    if [[ $(grep -s -i -P '^library'    ${file} 2>/dev/null) ]]; then
-      pkgs+=("pkg:${name}:libs")
-      for component in $(_cabal_libraries_in_file $file); do
-        pkgs+=("pkg:${name}:lib:${component}");
-      done
-    fi
-    if [[ $(grep -s -i -P '^test-suite' ${file} 2>/dev/null) ]]; then
-      pkgs+=("pkg:${name}:tests")
-      for component in $(_cabal_tests_in_file $file); do
-        pkgs+=("pkg:${name}:test:${component}");
-      done
-    fi
-    if [[ $(grep -s -i -P '^benchmark'  ${file} 2>/dev/null) ]]; then
-      pkgs+=("pkg:${name}:benches")
-      for component in $(_cabal_benchmarks_in_file $file); do
-        pkgs+=("pkg:${name}:bench:${component}");
-      done
-    fi
-    if [[ $(grep -s -i -P '^executable' ${file} 2>/dev/null) ]]; then
-      pkgs+=("pkg:${name}:exes")
-      for component in $(_cabal_executables_in_file $file); do
-        pkgs+=("pkg:${name}:exe:${component}");
-      done
-    fi
-  done 
-  # not using -i, this way pkg:${name} will be alway at hand
-  _multi_parts ":" pkgs
+  _cabal_components_with_prefix "pkg:"
 }
 
 _cabal_executable_pkgspecs () {
@@ -560,7 +572,8 @@ _cabal () {
           elif [[ ${current_word:0:6} == "bench:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_bench'
           else
-            _alternative 'cmps:components:_cabal_components'
+            _arguments '*:components:_cabal_components' \
+                     ${_cabal_build_options[@]}
           fi
         ;;
         bench)
@@ -655,7 +668,8 @@ _cabal () {
           elif [[ ${current_word:0:6} == "bench:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_bench'
           else
-            _alternative 'cmps:components:_cabal_components'
+            _arguments '*:components:_cabal_components' \
+                     ${_cabal_build_options[@]}
           fi
         ;;
         hscolour)
@@ -729,7 +743,8 @@ _cabal () {
           else
             if [[ -e "cabal.project" ]]
             then
-              _alternative 'cmps:components:_cabal_components'
+              _arguments '*:components:_cabal_components' \
+                       ${_cabal_build_options[@]}
             else
               _cabal_available_packages
             fi
@@ -768,7 +783,8 @@ _cabal () {
           elif [[ ${current_word:0:6} == "bench:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_bench'
           else
-            _alternative 'cmps:components:_cabal_components'
+            _arguments '*:components:_cabal_components' \
+                     ${_cabal_build_options[@]}
           fi
         ;;
         report)
