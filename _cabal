@@ -1,7 +1,7 @@
 #compdef cabal
 #
 # Author: Marcin Szamotulski
-# Copyright: 2019
+# Copyright: 2019,2020
 #
 # TODO: pkgs specs of the form: pkgname:test:..
 #                               pkgname:exe:...
@@ -11,6 +11,9 @@
 # TODO: --with-PROG=PATH --PROG-option --PROG-options
 # TODO: cabal {fetch,install,get,info} - complete packages
 # TODO: --package-db=(global user or a file path)
+#
+# TODO: use only packages defined in `cabal.project` and / or
+#       `cabal.project.local` files.
 
 source "$(dirname ${0})/_ghc"
 
