@@ -113,6 +113,30 @@ _cabal_list_libraries () {
   done;
 }
 
+_cabal_component_names_in_file () {
+  local file=$1
+  local name=$(grep "name:" ${file} 2>/dev/null | sed 's/^name:\s*//')
+  grep -s -i '^\(library\|executable\|test-suite\|benchmark\)' ${file} 2>/dev/null \
+    | sed -e "s/library\s*$/${name}/g" \
+    | sed -e 's/library\s\+\(\S\)/\1/g' \
+    | sed -e 's/executable\s\+//g' \
+    | sed -e 's/test-suite\s\+//g' \
+    | sed -e 's/benchmark\s\+//g'
+}
+
+_cabal_components_in_file () {
+  local file=$1
+  local name=$(grep "name:" ${file} 2>/dev/null | sed 's/^name:\s*//')
+  # TODO: include libs / tests / benches only if multiple libraries
+  # / test-suites / benchmarks are present.
+  grep -s -i '^\(library\|executable\|test-suite\|benchmark\)' ${file} 2>/dev/null \
+    | sed -e "s/library\s*$/lib:${name}/g" \
+    | sed -e 's/library\s\+\(\S\)/lib:\1/g' \
+    | sed -e 's/executable\s\+/exe:/g' \
+    | sed -e 's/test-suite\s\+/test:/g' \
+    | sed -e 's/benchmark\s\+/bench:/g'
+}
+
 _cabal_libraries_in_file () {
   local file=$1
   grep -s -P '^library\s+\S' $file | awk '{print $2}' | sed -e 's/:/\\:/g' 2>/dev/null
@@ -181,34 +205,28 @@ _cabal_components_with_prefix () {
   local -a components
   local -a pkgs
   local file name
+  local libs=0
+  local execs=0
+  local tests=0
+  local benches=0
   for file in $(_cabal_list_files); do
     name=$(grep "name:" ${file} | sed 's/^name:\s*//')
-    if [[ $(grep -s -i -P '^library'    ${file} 2>/dev/null) ]]; then
-      pkgs+=("${prefix}${name}:libs")
-      for component in $(_cabal_libraries_in_file $file); do
-        pkgs+=("${prefix}${name}:lib:${component}");
-      done
-    fi
-    if [[ $(grep -s -i -P '^test-suite' ${file} 2>/dev/null) ]]; then
-      pkgs+=("${prefix}${name}:tests")
-      for component in $(_cabal_tests_in_file $file); do
-        pkgs+=("${prefix}${name}:test:${component}");
-      done
-    fi
-    if [[ $(grep -s -i -P '^benchmark'  ${file} 2>/dev/null) ]]; then
-      pkgs+=("${prefix}${name}:benches")
-      for component in $(_cabal_benchmarks_in_file $file); do
-        pkgs+=("${prefix}${name}:bench:${component}");
-      done
-    fi
-    if [[ $(grep -s -i -P '^executable' ${file} 2>/dev/null) ]]; then
-      pkgs+=("${prefix}${name}:exes")
-      for component in $(_cabal_executables_in_file $file); do
-        pkgs+=("${prefix}${name}:exe:${component}");
-      done
-    fi
+    pkgs+=("${prefix}${name}");
+    for component in $(_cabal_components_in_file $file); do
+      [[ ${component} =~ '^lib:'     ]] && (( tests= ${libs}    + 1 ));
+      [[ ${component} =~ '^test:'    ]] && (( tests= ${tests}   + 1 ));
+      [[ ${component} =~ '^exec:'    ]] && (( tests= ${execs}   + 1 ));
+      [[ ${component} =~ '^benches:' ]] && (( tests= ${benches} + 1 ));
+      pkgs+=("${prefix}${name}:${component}");
+    done
+    [[ ${libs}    > 1 ]] && pkgs+=("${prefix}${name}:libs");
+    [[ ${tests}   > 1 ]] && pkgs+=("${prefix}${name}:tests");
+    [[ ${execs}   > 1 ]] && pkgs+=("${prefix}${name}:execs");
+    [[ ${benches} > 1 ]] && pkgs+=("${prefix}${name}:benches");
   done 
-  _multi_parts ":" pkgs
+  # multi part inserts final ':' in pakcage names
+  # _multi_parts ":" pkgs
+  _arguments "*:pkgspecs:(${pkgs})"
 }
 
 # completion for `package-name:(libs|tests|benches|exes)` and
