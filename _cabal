@@ -208,18 +208,22 @@ _cabal_components_with_prefix () {
   local -a components
   local -a pkgs
   local file name
-  local libs=0
-  local execs=0
-  local tests=0
-  local benches=0
+  local libs
+  local execs
+  local tests
+  local benches
   for file in $(_cabal_list_files); do
+    libs=0
+    execs=0
+    tests=0
+    benches=0
     name=$(grep "name:" ${file} | sed 's/^name:\s*//')
     pkgs+=("${prefix}${name}");
     for component in $(_cabal_components_in_file $file); do
-      [[ ${component} =~ '^lib:'     ]] && (( tests= ${libs}    + 1 ));
-      [[ ${component} =~ '^test:'    ]] && (( tests= ${tests}   + 1 ));
-      [[ ${component} =~ '^exec:'    ]] && (( tests= ${execs}   + 1 ));
-      [[ ${component} =~ '^benches:' ]] && (( tests= ${benches} + 1 ));
+      [[ ${component} =~ '^lib:' ]] && (( libs=${libs} + 1 ));
+      [[ ${component} =~ '^test:' ]] && (( tests=${tests} + 1 ));
+      [[ ${component} =~ '^exec:' ]] && (( execs=${execs} + 1 ));
+      [[ ${component} =~ '^benches:' ]] && (( benches=${benches} + 1 ));
       pkgs+=("${prefix}${name}:${component}");
     done
     [[ ${libs}    > 1 ]] && pkgs+=("${prefix}${name}:libs");
