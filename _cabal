@@ -130,8 +130,17 @@ _cabal_component_names_in_file () {
 _cabal_components_in_file () {
   local file=$1
   local name=$(grep "name:" ${file} 2>/dev/null | sed 's/^name:\s*//')
-  # TODO: include libs / tests / benches only if multiple libraries
-  # / test-suites / benchmarks are present.
+  grep -s -i '^\(library\|executable\|test-suite\|benchmark\)' ${file} 2&>/dev/null \
+    | sed -e "s/library\s*$/${name}/g" \
+    | sed -e 's/library\s\+\(\S\)/\1/g' \
+    | sed -e 's/executable\s\+//g' \
+    | sed -e 's/test-suite\s\+//g' \
+    | sed -e 's/benchmark\s\+//g'
+}
+
+_cabal_components_in_file_with_prefix () {
+  local file=$1
+  local name=$(grep "name:" ${file} 2>/dev/null | sed 's/^name:\s*//')
   grep -s -i '^\(library\|executable\|test-suite\|benchmark\)' ${file} 2&>/dev/null \
     | sed -e "s/library\s*$/lib:${name}/g" \
     | sed -e 's/library\s\+\(\S\)/lib:\1/g' \
@@ -219,7 +228,7 @@ _cabal_components_with_prefix () {
     benches=0
     name=$(grep "name:" ${file} | sed 's/^name:\s*//')
     pkgs+=("${prefix}${name}");
-    for component in $(_cabal_components_in_file $file); do
+    for component in $(_cabal_components_in_file_with_prefix $file); do
       [[ ${component} =~ '^lib:' ]] && (( libs=${libs} + 1 ));
       [[ ${component} =~ '^test:' ]] && (( tests=${tests} + 1 ));
       [[ ${component} =~ '^exec:' ]] && (( execs=${execs} + 1 ));
@@ -239,7 +248,36 @@ _cabal_components_with_prefix () {
 # completion for `package-name:(libs|tests|benches|exes)` and
 # `package-name:(lib:test:bench:exe):component-name`
 _cabal_components () {
-  _cabal_components_with_prefix;
+  local -a components
+  local -a pkgs
+  local file name
+  local libs
+  local execs
+  local tests
+  local benches
+  for file in $(_cabal_list_files); do
+    libs=0
+    execs=0
+    tests=0
+    benches=0
+    name=$(grep "name:" ${file} | sed 's/^name:\s*//')
+    # pkgs+=("${name}");
+    for component in $(_cabal_components_in_file $file); do
+      [[ ${component} =~ '^lib:' ]] && (( libs=${libs} + 1 ));
+      [[ ${component} =~ '^test:' ]] && (( tests=${tests} + 1 ));
+      [[ ${component} =~ '^exec:' ]] && (( execs=${execs} + 1 ));
+      [[ ${component} =~ '^benches:' ]] && (( benches=${benches} + 1 ));
+      pkgs+=("${component}");
+    done
+    [[ ${libs}    > 1 ]] && pkgs+=("${name}:libs");
+    [[ ${tests}   > 1 ]] && pkgs+=("${name}:tests");
+    [[ ${execs}   > 1 ]] && pkgs+=("${name}:execs");
+    [[ ${benches} > 1 ]] && pkgs+=("${name}:benches");
+  done 
+  # multi part inserts final ':' in pakcage names
+  # _multi_parts ":" pkgs
+  _arguments "*:components:(${pkgs})"
+  # echo ${pkgs}
 }
 
 # test-suites, benchmarks and executables
