@@ -233,7 +233,6 @@ _cabal_components_with_prefix () {
       [[ ${component} =~ '^test:' ]] && (( tests=${tests} + 1 ));
       [[ ${component} =~ '^exec:' ]] && (( execs=${execs} + 1 ));
       [[ ${component} =~ '^benches:' ]] && (( benches=${benches} + 1 ));
-      pkgs+=("${prefix}${name}:${component}");
     done
     [[ ${libs}    > 1 ]] && pkgs+=("${prefix}${name}:libs");
     [[ ${tests}   > 1 ]] && pkgs+=("${prefix}${name}:tests");
@@ -261,13 +260,14 @@ _cabal_components () {
     tests=0
     benches=0
     name=$(grep "name:" ${file} | sed 's/^name:\s*//')
-    # pkgs+=("${name}");
-    for component in $(_cabal_components_in_file $file); do
-      [[ ${component} =~ '^lib:' ]] && (( libs=${libs} + 1 ));
-      [[ ${component} =~ '^test:' ]] && (( tests=${tests} + 1 ));
-      [[ ${component} =~ '^exec:' ]] && (( execs=${execs} + 1 ));
-      [[ ${component} =~ '^benches:' ]] && (( benches=${benches} + 1 ));
-      pkgs+=("${component}");
+    pkgs+=("${name}")
+    for component_with_prefix in $(_cabal_components_in_file_with_prefix $file); do
+      local component=${component_with_prefix/*:/};
+      [[ ${component_with_prefix} =~ '^lib:'     ]] && (( libs=${libs} + 1 ));
+      [[ ${component_with_prefix} =~ '^test:'    ]] && (( tests=${tests} + 1 ));
+      [[ ${component_with_prefix} =~ '^exec:'    ]] && (( execs=${execs} + 1 ));
+      [[ ${component_with_prefix} =~ '^benches:' ]] && (( benches=${benches} + 1 ));
+      pkgs+=("${name}:${component}");
     done
     [[ ${libs}    > 1 ]] && pkgs+=("${name}:libs");
     [[ ${tests}   > 1 ]] && pkgs+=("${name}:tests");
@@ -277,7 +277,36 @@ _cabal_components () {
   # multi part inserts final ':' in pakcage names
   # _multi_parts ":" pkgs
   _arguments "*:components:(${pkgs})"
-  # echo ${pkgs}
+}
+
+_cabal_components_in_package () {
+  local pkgname=${1}
+  local name;
+  local pkgs;
+  local libs=0
+  local execs=0
+  local tests=0
+  local benches=0
+  for file in $(_cabal_list_files); do
+    name=$(grep "name:" ${file} | sed 's/^name:\s*//')
+    if [[ ${name} == ${pkgname} ]]; then
+      for component_with_prefix in $(_cabal_components_in_file_with_prefix ${file}); do
+        local component=${component_with_prefix/*:/}
+        [[ ${component_with_prefix} =~ '^lib:'   ]] && (( libs=${libs} + 1 ));
+        [[ ${component_with_prefix} =~ '^test:'  ]] && (( tests=${tests} + 1 ));
+        [[ ${component_with_prefix} =~ '^exe:'   ]] && (( execs=${execs} + 1 ));
+        [[ ${component_with_prefix} =~ '^bench:' ]] && (( benches=${benches} + 1 ));
+        if [[ ${component} != ${name} ]]; then
+          pkgs+=("${name}:${component}");
+        fi
+      done
+      [[ ${libs}    > 1 ]] && pkgs+=("${name}:libs");
+      [[ ${tests}   > 1 ]] && pkgs+=("${name}:tests");
+      [[ ${execs}   > 1 ]] && pkgs+=("${name}:execs");
+      [[ ${benches} > 1 ]] && pkgs+=("${name}:benches");
+    fi
+  done
+  _arguments "*:components:(${pkgs})"
 }
 
 # test-suites, benchmarks and executables
@@ -623,9 +652,7 @@ _cabal () {
       # handle subcommand arguments and options
       case ${subcommand} in
         build)
-          if [[ ${current_word:0:4} == "pkg:" ]]; then
-            _arguments '*:pkgspec:_cabal_pkgspecs'
-          elif [[ ${current_word:0:4} == "lib:" ]]; then
+          if [[ ${current_word:0:4} == "lib:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_lib'
           elif [[ ${current_word:0:5} == "test:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_test'
@@ -633,6 +660,10 @@ _cabal () {
             _arguments '*:pkgspec:_cabal_pkgspecs_exe'
           elif [[ ${current_word:0:6} == "bench:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+          elif [[ ${current_word:0:4} == "pkg:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs'
+          elif   [[ ${current_word} =~ ':' ]]; then
+            _cabal_components_in_package ${current_word/:*/}
           else
             _arguments '*:components:_cabal_components' \
                      ${_cabal_build_options[@]}
@@ -729,6 +760,8 @@ _cabal () {
             _arguments '*:pkgspec:_cabal_pkgspecs_exe'
           elif [[ ${current_word:0:6} == "bench:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+          elif   [[ ${current_word} =~ ':' ]]; then
+            _cabal_components_in_package ${current_word/:*/}
           else
             _arguments '*:components:_cabal_components' \
                      ${_cabal_build_options[@]}
@@ -844,6 +877,8 @@ _cabal () {
             _arguments '*:pkgspec:_cabal_pkgspecs_exe'
           elif [[ ${current_word:0:6} == "bench:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+          elif   [[ ${current_word} =~ ':' ]]; then
+            _cabal_components_in_package ${current_word/:*/}
           else
             _arguments '*:components:_cabal_components' \
                      ${_cabal_build_options[@]}
@@ -915,8 +950,6 @@ _cabal () {
                      {-v=,--verbose=}':level:(0 1 2 3)' \
                      {-f,--force} \
                      {-a,--augment=}':setting to augment:_guard ".\+"'
-
-                      
         ;;
       esac
   esac
