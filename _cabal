@@ -151,17 +151,20 @@ _cabal_components_in_file_with_prefix () {
 
 _cabal_libraries_in_file () {
   local file=$1
-  grep -s -P '^library\s+\S' $file | awk '{print $2}' | sed -e 's/:/\\:/g' 2&>/dev/null
+  local name=$(grep "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//') 2&>/dev/null
+  grep -s -P '^library\s+\S' $file | awk '{print $2}' | sed -e "s/^/${name}:/"
   [[ $(grep -s -i "^library\s*$" ${file}) ]] \
     && grep "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//'
 }
 
 _cabal_list_all_executables () {
   # find all executable components
-  local file
+  local name;
+  local file;
   for file in $(_cabal_list_files); do
+    name=$(grep "name:" ${file} | sed 's/^name:\s*//')
     grep -s -i '^\(test-suite\|executable\|benchmark\)\s\+' $file 2&>/dev/null \
-      | awk '{print $2}' | sed -e 's/:/\\:/g'
+      | awk '{print $2}' | sed -e 's/:/\\:/g' | sed -e "s/^/${name}:/"
   done;
 }
 
@@ -180,28 +183,35 @@ _cabal_executables_in_file () {
 
 _cabal_list_tests () {
   # find all components
-  local file cmps
+  local name;
+  local file cmps;
   for file in $(_cabal_list_files); do
-    grep -s -P '^test-suite\s+\S' $file 2&>/dev/null | awk '{print $2}' | sed -e 's/:/\\:/g'
+    name=$(grep "name:" ${file} | sed 's/^name:\s*//')
+    grep -s -P '^test-suite\s+\S' $file 2&>/dev/null | awk '{print $2}' | sed -e "s/^/${name}:/"
   done;
 }
 
 _cabal_tests_in_file () {
   local file=$1
-  grep -s -P '^test-suite\s+\S' $file 2&>/dev/null | awk '{print $2}' | sed -e 's/:/\\:/g'
+  local name=$(grep "name:" ${file} | sed 's/^name:\s*//');
+  grep -s -P '^test-suite\s+\S' $file 2&>/dev/null | awk '{print $2}' | sed -e "s/^/${name}:/"
 }
 
 _cabal_list_benchmarks () {
   # find all benchmarks
   local file
+  local name;
   for file in $(_cabal_list_files); do
-    grep -s -i '^benchmark\s\+' $file 2&>/dev/null | awk '{print $2}' | sed -e 's/:/\\:/g'
+    name=$(grep "name:" ${file} | sed 's/^name:\s*//');
+    grep -s -i '^benchmark\s\+' $file 2&>/dev/null | awk '{print $2}' | sed -e "s/^/${name}:/"
+
   done;
 }
 
 _cabal_benchmarks_in_file () {
   local file=$1
-  grep -s -i '^benchmark\s\+' $file 2&>/dev/null | awk '{print $2}' | sed -e 's/:/\\:/g'
+  local name=$(grep "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//')
+  grep -s -i '^benchmark\s\+' $file 2&>/dev/null | awk '{print $2}' | sed -e "s/^/${name}:/"
 }
 
 # completion for components
