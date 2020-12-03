@@ -87,6 +87,32 @@ _cabal_list_files () {
                  -type f -name "*.cabal"
 }
 
+
+# find cabal file by package name
+_cabal_find_package () {
+  local pkgname=${1}
+  local depth
+  zstyle -s ":completion:${MAIN_CONTEXT}:options:" depth depth
+  # options might not be set if using outside of completion
+  [[ -z ${depth} ]] && depth=4
+  res=$(find -maxdepth ${depth} \
+                 -name "dist-newstyle" -prune , \
+                 -name "dist" -prune , \
+                 -name ".stack-work" -prune , \
+                 -name ".git" -prune , \
+                 -type f -name "${pkgname}.cabal")
+  if [[ -n $res ]]; then
+    echo $res
+  else
+    for file in $(_cabal_list_files); do
+      local name=$(grep "name:" ${file} | sed 's/^name:\s*//')
+      if [[ ${name} == ${pkgname} ]]; then
+        echo $file
+      fi
+    done
+  fi
+}
+
 _cabal_list_packages () {
   # find all cabal packages
   local file
@@ -285,6 +311,9 @@ _cabal_components () {
     [[ ${benches} > 1 ]] && pkgs+=("${name}:benches");
   done 
   # multi part inserts final ':' in pakcage names
+  # it also does not allow to complete names with the same prefix as in
+  # `aaa:bbb` and `aaa-ccc:bbb`, after `aaa -<tab>-> aaa:` not giving a choice
+  # for `aaa-ccc:bbb`)
   # _multi_parts ":" pkgs
   _arguments "*:components:(${pkgs})"
 }
@@ -297,25 +326,22 @@ _cabal_components_in_package () {
   local execs=0
   local tests=0
   local benches=0
-  for file in $(_cabal_list_files); do
-    name=$(grep "name:" ${file} | sed 's/^name:\s*//')
-    if [[ ${name} == ${pkgname} ]]; then
-      for component_with_prefix in $(_cabal_components_in_file_with_prefix ${file}); do
-        local component=${component_with_prefix/*:/}
-        [[ ${component_with_prefix} =~ '^lib:'   ]] && (( libs=${libs} + 1 ));
-        [[ ${component_with_prefix} =~ '^test:'  ]] && (( tests=${tests} + 1 ));
-        [[ ${component_with_prefix} =~ '^exe:'   ]] && (( execs=${execs} + 1 ));
-        [[ ${component_with_prefix} =~ '^bench:' ]] && (( benches=${benches} + 1 ));
-        if [[ ${component} != ${name} ]]; then
-          pkgs+=("${name}:${component}");
-        fi
-      done
-      [[ ${libs}    > 1 ]] && pkgs+=("${name}:libs");
-      [[ ${tests}   > 1 ]] && pkgs+=("${name}:tests");
-      [[ ${execs}   > 1 ]] && pkgs+=("${name}:execs");
-      [[ ${benches} > 1 ]] && pkgs+=("${name}:benches");
-    fi
-  done
+  local file=$(_cabal_find_package ${pkgname})
+  name=$(grep "name:" ${file} | sed 's/^name:\s*//')
+  if [[ ${name} == ${pkgname} ]]; then
+    for component_with_prefix in $(_cabal_components_in_file_with_prefix ${file}); do
+      local component=${component_with_prefix/*:/}
+      [[ ${component_with_prefix} =~ '^lib:'   ]] && (( libs=${libs} + 1 ));
+      [[ ${component_with_prefix} =~ '^test:'  ]] && (( tests=${tests} + 1 ));
+      [[ ${component_with_prefix} =~ '^exe:'   ]] && (( execs=${execs} + 1 ));
+      [[ ${component_with_prefix} =~ '^bench:' ]] && (( benches=${benches} + 1 ));
+      pkgs+=("${name}:${component}");
+    done
+    [[ ${libs}    > 1 ]] && pkgs+=("${name}:libs");
+    [[ ${tests}   > 1 ]] && pkgs+=("${name}:tests");
+    [[ ${execs}   > 1 ]] && pkgs+=("${name}:execs");
+    [[ ${benches} > 1 ]] && pkgs+=("${name}:benches");
+  fi
   _arguments "*:components:(${pkgs})"
 }
 
