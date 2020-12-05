@@ -14,6 +14,8 @@
 #
 # TODO: use only packages defined in `cabal.project` and / or
 #       `cabal.project.local` files.
+#
+# TODO: add support for `<package-name>:{lib|exec|bench|test}:<component-name>`
 
 source "$(dirname ${0})/_ghc"
 
