@@ -84,7 +84,8 @@ _cabal_list_files () {
                  -name "dist" -prune , \
                  -name ".stack-work" -prune , \
                  -name ".git" -prune , \
-                 -type f -name "*.cabal"
+                 -type f -name "*.cabal" \
+                 2&>/dev/null
 }
 
 
@@ -100,7 +101,8 @@ _cabal_find_package () {
                  -name "dist" -prune , \
                  -name ".stack-work" -prune , \
                  -name ".git" -prune , \
-                 -type f -name "${pkgname}.cabal")
+                 -type f -name "${pkgname}.cabal" \
+                 2&>/dev/null)
   if [[ -n $res ]]; then
     echo $res
   else
@@ -463,7 +465,7 @@ _cabal_pkgspecs_bench () {
 _cabal_find_ghc () {
   local -a ghcs
   for p in $( echo ${PATH} | sed 's/:/\n/g' ); do
-    ghcs+=( $(find $p -name "ghc*" | grep -s -P 'ghc(-\d+\.\d+\.\d+)?$' 2&>/dev/null) )
+    ghcs+=( $(find $p -name "ghc*" 2&>/dev/null | grep -s -P 'ghc(-\d+\.\d+\.\d+)?$' 2&>/dev/null) )
   done
   _describe -t ghcs 'ghc' ghcs
 }
