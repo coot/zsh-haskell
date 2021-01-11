@@ -107,7 +107,7 @@ _cabal_find_package () {
     echo $res
   else
     for file in $(_cabal_list_files); do
-      local name=$(grep "name:" ${file} | sed 's/^name:\s*//')
+      local name=$(grep -i "name:" ${file} | sed 's/^name:\s*//i')
       if [[ ${name} == ${pkgname} ]]; then
         echo $file
       fi
@@ -119,7 +119,7 @@ _cabal_list_packages () {
   # find all cabal packages
   local file
   for file in $(_cabal_list_files); do
-    name=$(grep "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//')
+    name=$(grep -i "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//i')
   done;
 }
 
@@ -127,10 +127,10 @@ _cabal_list_components () {
   # find all components
   local file cmps
   for file in $(_cabal_list_files); do
-    grep -s -P '^(test-suite|executable|benchmark|library)\s+\S' $file 2&>/dev/null \
+    grep -i -s -P '^(test-suite|executable|benchmark|library)\s+\S' $file 2&>/dev/null \
       | awk '{print $2}' | sed -e 's/:/\\:/g'
     [[ $(grep -s -i "^library\s*$" ${file}) ]] \
-      && grep "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//'
+      && grep -i "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//i'
   done;
 }
 
@@ -138,51 +138,51 @@ _cabal_list_libraries () {
   # find all components
   local file cmps
   for file in $(_cabal_list_files); do
-    grep -s -P '^library\s+\S' $file | awk '{print $2}' | sed -e 's/:/\\:/g' 2&>/dev/null
+    grep -i -s -P '^library\s+\S' $file | awk '{print $2}' | sed -e 's/:/\\:/g' 2&>/dev/null
     [[ $(grep -s -i "^library\s*$" ${file}) ]] \
-      && grep "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//'
+      && grep -i "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//i'
   done;
 }
 
 _cabal_component_names_in_file () {
   local file=$1
-  local name=$(grep "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//')
+  local name=$(grep -i "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//i')
   grep -s -i '^\(library\|executable\|test-suite\|benchmark\)' ${file} 2&>/dev/null \
-    | sed -e "s/library\s*$/${name}/g" \
-    | sed -e 's/library\s\+\(\S\)/\1/g' \
-    | sed -e 's/executable\s\+//g' \
-    | sed -e 's/test-suite\s\+//g' \
-    | sed -e 's/benchmark\s\+//g'
+    | sed -e "s/library\s*$/${name}/gi" \
+    | sed -e 's/library\s\+\(\S\)/\1/gi' \
+    | sed -e 's/executable\s\+//gi' \
+    | sed -e 's/test-suite\s\+//gi' \
+    | sed -e 's/benchmark\s\+//gi'
 }
 
 _cabal_components_in_file () {
   local file=$1
-  local name=$(grep "name:" ${file} 2>/dev/null | sed 's/^name:\s*//')
+  local name=$(grep -i "name:" ${file} 2>/dev/null | sed 's/^name:\s*//i')
   grep -s -i '^\(library\|executable\|test-suite\|benchmark\)' ${file} 2&>/dev/null \
-    | sed -e "s/library\s*$/${name}/g" \
-    | sed -e 's/library\s\+\(\S\)/\1/g' \
-    | sed -e 's/executable\s\+//g' \
-    | sed -e 's/test-suite\s\+//g' \
-    | sed -e 's/benchmark\s\+//g'
+    | sed -e "s/library\s*$/${name}/gi" \
+    | sed -e 's/library\s\+\(\S\)/\1/gi' \
+    | sed -e 's/executable\s\+//gi' \
+    | sed -e 's/test-suite\s\+//gi' \
+    | sed -e 's/benchmark\s\+//gi'
 }
 
 _cabal_components_in_file_with_prefix () {
   local file=$1
-  local name=$(grep "name:" ${file} 2>/dev/null | sed 's/^name:\s*//')
+  local name=$(grep -i "name:" ${file} 2>/dev/null | sed 's/^name:\s*//i')
   grep -s -i '^\(library\|executable\|test-suite\|benchmark\)' ${file} 2&>/dev/null \
-    | sed -e "s/library\s*$/lib:${name}/g" \
-    | sed -e 's/library\s\+\(\S\)/lib:\1/g' \
-    | sed -e 's/executable\s\+/exe:/g' \
-    | sed -e 's/test-suite\s\+/test:/g' \
-    | sed -e 's/benchmark\s\+/bench:/g'
+    | sed -e "s/library\s*$/lib:${name}/gi" \
+    | sed -e 's/library\s\+\(\S\)/lib:\1/gi' \
+    | sed -e 's/executable\s\+/exe:/gi' \
+    | sed -e 's/test-suite\s\+/test:/gi' \
+    | sed -e 's/benchmark\s\+/bench:/gi'
 }
 
 _cabal_libraries_in_file () {
   local file=$1
-  local name=$(grep "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//') 2&>/dev/null
+  local name=$(grep -i "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//i') 2&>/dev/null
   grep -s -P '^library\s+\S' $file | awk '{print $2}' | sed -e "s/^/${name}:/"
   [[ $(grep -s -i "^library\s*$" ${file}) ]] \
-    && grep "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//'
+    && grep -i "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//i'
 }
 
 _cabal_list_all_executables () {
@@ -190,7 +190,7 @@ _cabal_list_all_executables () {
   local name;
   local file;
   for file in $(_cabal_list_files); do
-    name=$(grep "name:" ${file} | sed 's/^name:\s*//')
+    name=$(grep -i "name:" ${file} | sed 's/^name:\s*//i')
     grep -s -i '^\(test-suite\|executable\|benchmark\)\s\+' $file 2&>/dev/null \
       | awk '{print $2}' | sed -e 's/:/\\:/g' | sed -e "s/^/${name}:/"
   done;
@@ -206,7 +206,7 @@ _cabal_list_executables () {
 
 _cabal_executables_in_file () {
   local file=$1
-  grep -s -i '^executable\s\+' $file 2&>/dev/null | awk '{print $2}' | sed -e 's/:/\\:/g'
+  grep -s -i '^executable\s\+' $file 2&>/dev/null | awk '{print $2}' | sed -e 's/:/\\:/gi'
 }
 
 _cabal_list_tests () {
@@ -214,14 +214,14 @@ _cabal_list_tests () {
   local name;
   local file cmps;
   for file in $(_cabal_list_files); do
-    name=$(grep "name:" ${file} | sed 's/^name:\s*//')
+    name=$(grep -i "name:" ${file} | sed 's/^name:\s*//i')
     grep -s -P '^test-suite\s+\S' $file 2&>/dev/null | awk '{print $2}' | sed -e "s/^/${name}:/"
   done;
 }
 
 _cabal_tests_in_file () {
   local file=$1
-  local name=$(grep "name:" ${file} | sed 's/^name:\s*//');
+  local name=$(grep -i "name:" ${file} | sed 's/^name:\s*//i');
   grep -s -P '^test-suite\s+\S' $file 2&>/dev/null | awk '{print $2}' | sed -e "s/^/${name}:/"
 }
 
@@ -230,7 +230,7 @@ _cabal_list_benchmarks () {
   local file
   local name;
   for file in $(_cabal_list_files); do
-    name=$(grep "name:" ${file} | sed 's/^name:\s*//');
+    name=$(grep -i "name:" ${file} | sed 's/^name:\s*//i');
     grep -s -i '^benchmark\s\+' $file 2&>/dev/null | awk '{print $2}' | sed -e "s/^/${name}:/"
 
   done;
@@ -238,7 +238,7 @@ _cabal_list_benchmarks () {
 
 _cabal_benchmarks_in_file () {
   local file=$1
-  local name=$(grep "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//')
+  local name=$(grep -i "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//i')
   grep -s -i '^benchmark\s\+' $file 2&>/dev/null | awk '{print $2}' | sed -e "s/^/${name}:/"
 }
 
@@ -264,7 +264,7 @@ _cabal_components_with_prefix () {
     execs=0
     tests=0
     benches=0
-    name=$(grep "name:" ${file} | sed 's/^name:\s*//')
+    name=$(grep -i "name:" ${file} | sed 's/^name:\s*//i')
     pkgs+=("${prefix}${name}");
     for component in $(_cabal_components_in_file_with_prefix $file); do
       [[ ${component} =~ '^lib:' ]] && (( libs=${libs} + 1 ));
@@ -297,7 +297,7 @@ _cabal_components () {
     execs=0
     tests=0
     benches=0
-    name=$(grep "name:" ${file} | sed 's/^name:\s*//')
+    name=$(grep -i "name:" ${file} | sed 's/^name:\s*//i')
     pkgs+=("${name}")
     for component_with_prefix in $(_cabal_components_in_file_with_prefix $file); do
       local component=${component_with_prefix/*:/};
@@ -322,6 +322,7 @@ _cabal_components () {
 
 _cabal_components_in_package () {
   local pkgname=${1}
+  local word=${2}
   local name;
   local pkgs;
   local libs=0
@@ -329,7 +330,7 @@ _cabal_components_in_package () {
   local tests=0
   local benches=0
   local file=$(_cabal_find_package ${pkgname})
-  name=$(grep "name:" ${file} | sed 's/^name:\s*//')
+  name=$(grep -i "name:" ${file} | sed 's/^name:\s*//i')
   if [[ ${name} == ${pkgname} ]]; then
     for component_with_prefix in $(_cabal_components_in_file_with_prefix ${file}); do
       local component=${component_with_prefix/*:/}
@@ -338,6 +339,9 @@ _cabal_components_in_package () {
       [[ ${component_with_prefix} =~ '^exe:'   ]] && (( execs=${execs} + 1 ));
       [[ ${component_with_prefix} =~ '^bench:' ]] && (( benches=${benches} + 1 ));
       pkgs+=("${name}:${component}");
+      if [[ ${word} =~ ':lib:' || ${word} =~ ':exe:' || ${word} =~ ':bench:' ]]; then
+        pkgs+=("${name}:${component_with_prefix}");
+      fi
     done
     [[ ${libs}    > 1 ]] && pkgs+=("${name}:libs");
     [[ ${tests}   > 1 ]] && pkgs+=("${name}:tests");
@@ -393,7 +397,7 @@ _cabal_executable_pkgspecs () {
   local -a pkgs
   local file name
   for file in $(_cabal_list_files); do
-    name=$(grep "name:" ${file} | sed 's/^name:\s*//')
+    name=$(grep -i "name:" ${file} | sed 's/^name:\s*//i')
     [[ $(grep -s -i -P '^test-suite' ${file} 2&>/dev/null) ]] && pkgs+=("pkg:${name}:tests")
     [[ $(grep -s -i -P '^benchmark'  ${file} 2&>/dev/null) ]] && pkgs+=("pkg:${name}:benches")
     [[ $(grep -s -i -P '^executable' ${file} 2&>/dev/null) ]] && pkgs+=("pkg:${name}:exes")
@@ -405,7 +409,7 @@ _cabal_tests_pkgspecs () {
   local -a pkgs
   local file name
   for file in $(_cabal_list_files); do
-    name=$(grep "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//')
+    name=$(grep -i "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//i')
     [[ $(grep -s -i -P '^test-suite' ${file} 2&>/dev/null) ]] && pkgs+=("pkg:${name}:tests")
   done 
   _multi_parts -i ":" pkgs
@@ -415,7 +419,7 @@ _cabal_benchmark_pkgspecs () {
   local -a pkgs
   local file name
   for file in $(_cabal_list_files); do
-    name=$(grep "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//')
+    name=$(grep -i "name:" ${file} 2&>/dev/null | sed 's/^name:\s*//i')
     [[ $(grep -s -i -P '^benchmark'  ${file} 2&>/dev/null) ]] && pkgs+=("pkg:${name}:benches")
   done 
   _multi_parts -i ":" pkgs
@@ -701,7 +705,7 @@ _cabal () {
           elif [[ ${current_word:0:4} == "pkg:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs'
           elif   [[ ${current_word} =~ ':' ]]; then
-            _cabal_components_in_package ${current_word/:*/}
+            _cabal_components_in_package ${current_word/:*/} ${current_word}
           else
             _arguments '*:components:_cabal_components' \
                      ${_cabal_build_options[@]}
