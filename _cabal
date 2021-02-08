@@ -606,8 +606,8 @@ _cabal_build_options=( {-h,--help} \
                        '--force-reinstalls' \
                        '--upgrade-dependencies' \
                        '--only-dependencies' \
-                       '--dependencies-only \
-                       ''--index-state' \
+                       '--dependencies-only' \
+                       '--index-state' \
                        '--root-cmd=: :_files' \
                        '--symlink-bindir=: :_files -/' \
                        '--build-summary' \
