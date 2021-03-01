@@ -37,7 +37,7 @@ _cabal_subcommands=( bench build check clean configure "exec" \
                      fetch freeze get "gen-bounds" haddock help \
                      hscolour info init install list outdated repl \
                      report run sdist "test" unpack update upload \
-                     "user-config" \
+                     "user-config" "list-bin" \
                    )
 
 _cabal_commands () {
@@ -70,6 +70,7 @@ _cabal_commands () {
       "update:Updates list of known packages."
       "upload:Uploads source packages or documentation to Hackage."
       "user-config:Display and update the user's global cabal configuration."
+      "list-bin:List path to a single executable."
     )
     _describe -t subcommands 'cabal subcommands' subcommands
 }
@@ -994,6 +995,19 @@ _cabal () {
                      {-v=,--verbose=}':level:(0 1 2 3)' \
                      {-f,--force} \
                      {-a,--augment=}':setting to augment:_guard ".\+"'
+        ;;
+        list-bin)
+          if [[ ${current_word:0:4} == "pkg:" ]]; then
+            _arguments '*:pkgspec:_cabal_executable_pkgspecs'
+          elif [[ ${current_word:0:5} == "test:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_test'
+          elif [[ ${current_word:0:4} == "exe:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_exe'
+          elif [[ ${current_word:0:6} == "bench:" ]]; then
+            _arguments '*:pkgspec:_cabal_pkgspecs_bench'
+          else
+            _alternative 'cmps:components:_cabal_all_executables'
+          fi
         ;;
       esac
   esac
