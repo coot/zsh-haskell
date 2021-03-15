@@ -472,7 +472,9 @@ _cabal_pkgspecs_bench () {
 _cabal_find_ghc () {
   local -a ghcs
   for p in $( echo ${PATH} | sed 's/:/\n/g' ); do
-    ghcs+=( $(find $p -name "ghc*" 2&>/dev/null | grep -s -P 'ghc(-\d+\.\d+\.\d+)?$' 2&>/dev/null) )
+    for f in $(find ${p} -name 'ghc*' 2&>/dev/null | grep -s -P 'ghc(-\d+\.\d+\.\d+)?$' 2&>/dev/null); do
+      ghcs+=($(basename ${f}))
+    done
   done
   _describe -t ghcs 'ghc' ghcs
 }
