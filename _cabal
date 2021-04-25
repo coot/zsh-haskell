@@ -472,7 +472,7 @@ _cabal_pkgspecs_bench () {
 _cabal_find_ghc () {
   local -a ghcs
   for p in $( echo ${PATH} | sed 's/:/\n/g' ); do
-    for f in $(find ${p} -name 'ghc*' 2&>/dev/null | grep -s -P 'ghc(-\d+\.\d+\.\d+)?$' 2&>/dev/null); do
+    for f in $(find ${p} -name 'ghc*' 2&>/dev/null | grep -s -P 'ghc(-\d+\.\d+(\.\d+)*)?$' 2&>/dev/null); do
       ghcs+=($(basename ${f}))
     done
   done
@@ -651,6 +651,14 @@ _cabal_build_options=( {-h,--help} \
                        '--ghc-option:ghc option:_ghc' \
                        '--ghc-options:ghc options:_ghc' \
                      )
+
+_cabal_install_options=( '--lib' \
+                         '--installdir:dir:_files -/' \
+                         {--ignore-project,-z}':ignore project' \
+                         '--package-env: :_files' \
+                         '--overwrite-policy=:policy:(always never)' \
+                         '--install-method=:method:(default copy symlink)' \
+                       )
 
 _cabal_subcommand () {
   local subcommands
@@ -883,12 +891,22 @@ _cabal () {
           elif [[ ${current_word:0:6} == "bench:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs_bench'
           else
-            if [[ -e "cabal.project" ]]
+            if [[ -e "cabal.project" && \
+                  ${words[(i)-z]} -gt ${#words} && \
+                  ${words[(i)--ignore-project]} -gt ${#words}
+               ]]
             then
               _arguments '*:components:_cabal_components' \
-                       ${_cabal_build_options[@]}
+                         ${_cabal_build_options[@]} \
+                         ${_cabal_install_options[@]}
+                        
             else
-              _cabal_available_packages
+              _arguments '*:package:_cabal_available_packages'
+              # TODO:
+              # _arguments '*:package:_cabal_available_packages' \
+                         # ${_cabal_build_options[@]} \
+                         # ${_cabal_install_options[@]}
+                         
             fi
           fi
         ;;
