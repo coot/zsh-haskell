@@ -34,10 +34,10 @@ _cabal_default_options () {
 }
 
 _cabal_subcommands=( bench build check clean configure "exec" \
-                     fetch freeze get "gen-bounds" haddock help \
+                     fetch freeze get gen-bounds haddock haddock-project help \
                      hscolour info init install list outdated repl \
                      report run sdist "test" unpack update upload \
-                     "user-config" "list-bin" \
+                     user-config list-bin \
                    )
 
 _cabal_commands () {
@@ -53,6 +53,7 @@ _cabal_commands () {
       "freeze:Freeze dependencies."
       "get:Download/Extract a package's source code (repository)."
       "gen-bounds:Generate dependency bounds."
+      "haddock-project:Build documentation for a cabal project."
       "haddock:Build Haddock documentation."
       "help:Help about commands."
       "hscolour:Generate HsColour colourised code, in HTML format."
@@ -804,6 +805,31 @@ _cabal () {
                      '--pristine' \
                      "*:package:_cabal_available_packages"
         ;;
+        haddock-project)
+          _arguments '::' \
+                     {-h,--help} \
+                     {-v=,--verbose=}':level:(0 1 2 3)' \
+                     '--hackage' \
+                     '--local' \
+                     '--output:outputdir:_files -/'  \
+                     '--prologue=:prologue:_files' \
+                     '--gen-index' \
+                     '--gen-contents' \
+                     '--hoogle' \
+                     '--executables' \
+                     '--tests' \
+                     '--benchmarks' \
+                     '--foreign-libraries' \
+                     '--internal' \
+                     '--css=:csspath:_files' \
+                     '--hyperlink-source' \
+                     '--quickjump' \
+                     '--hscolour-css:path:_files' \
+                     '--with-haddock:path:_files' \
+                     '--with-ghc=:path:_files' \
+                     '--ghc-options:ghc options:_ghc' \
+                     '--haddock-options:haddock options:'
+        ;;
         haddock)
           if [[ ${current_word:0:4} == "pkg:" ]]; then
             _arguments '*:pkgspec:_cabal_pkgspecs'
@@ -974,7 +1000,7 @@ _cabal () {
           _arguments '::' \
                      {-h,--help} \
                      {-v=,--verbose=}':level:(0 1 2 3)' \
-                     '--builddir=:buiddir:_files -/' \
+                     '--builddir=:builddir:_files -/' \
                      '--project-file=:projectfile:_files' \
                      {-l,--list-only} \
                      {-z,--null-sep} \
@@ -1028,7 +1054,6 @@ _cabal () {
           else
             _alternative 'cmps:components:_cabal_all_executables'
           fi
-        ;;
       esac
   esac
 }
