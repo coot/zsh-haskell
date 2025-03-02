@@ -611,6 +611,7 @@ _cabal_build_options=( {-h,--help} \
                        '--upgrade-dependencies' \
                        '--only-dependencies' \
                        '--dependencies-only' \
+                       '--only-download' \
                        '--index-state' \
                        '--root-cmd=: :_files' \
                        '--symlink-bindir=: :_files -/' \
