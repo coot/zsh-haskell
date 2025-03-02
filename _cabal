@@ -525,11 +525,11 @@ _cabal_build_options=( {-h,--help} \
                        '--htmldir=:dir:_files -/' \
                        '--haddockdir=:dir:_files -/' \
                        '--sysconfdir=:dir:_files -/' \
-                       '--program-prefix' \
-                       '--program-suffix' \
+                       '--program-prefix=:dir:_files -/' \
+                       '--program-suffix=:dir:_files -/' \
                        '--enable-library-vanilla' \
                        '--disable-library-vanilla' \
-                       {-p,--disable-library-profiling} \
+                       '--disable-library-profiling' \
                        '--disable-library-profiling' \
                        '--enable-shared' \
                        '--disable-shared' \
@@ -539,7 +539,7 @@ _cabal_build_options=( {-h,--help} \
                        '--disable-executable-dynamic' \
                        '--enable-executable-static' \
                        '--disable-executable-static' \
-                       '--enable-profiling' \
+                       {-p,--enable-profiling} \
                        '--disable-profiling' \
                        '--enable-executable-profiling' \
                        '--disable-executable-profiling' \
@@ -559,17 +559,19 @@ _cabal_build_options=( {-h,--help} \
                        '--disable-executable-stripping' \
                        '--enable-library-stripping' \
                        '--disable-library-stripping' \
+                       '--enable-build-info' \
+                       '--disable-build-info' \
                        '--configure-option::_guard ".*" ""' \
                        '--user' \
                        '--global' \
                        '--package-db=:package DB:_files -]' \
                        {-f,--flags} \
-                       '--extra-lib-dirs=:path:_files -/' \
                        '--enable-deterministic' \
                        '--disable-deterministic' \
                        '--ipid' \
                        '--cid' \
                        '--extra-lib-dirs=:extralib:_files -/' \
+                       '--extra-lib-dirs-static=:extralib:_files -/' \
                        '--extra-framework-dirs=:path:_files -/' \
                        '--extra-prog-path=:path:_files -/' \
                        '--instantiate-with' \
